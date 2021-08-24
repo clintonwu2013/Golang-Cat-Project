@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in</title>
+    <style>
+        .container_self{
+           margin-right: auto;
+           margin-left: auto;
+           width: 1000px;
+           height: 500px;
+           
+        }
+        .login{
+            border:1px #9D9D9D solid;
+            width: 580px;
+            margin-left: 10;
+            margin-right: 10;
+            margin-top: 100px;
+            height: 400px;
+            border-radius: 5px;
+            background-color: #FCFCFC;
+            display: inline-block;vertical-align: top; 
+        }
+        .pwd{
+            margin-left: auto;
+            margin-right: auto;
+            width: 300px;
+            text-align: center;
+        }
+        .head{
+            margin-top: 20px;
+        }
+        .left{
+            margin-top:100px;
+            width: 400px;
+            text-align: center;
+            display: inline-block;vertical-align: top;
+        }
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        @media screen and (max-width:600px){
+            .container_self{
+                width: 100%;
+            }
+            .left{
+                margin-top: 0px;
+                width: 400px;
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+            }
+            .login{
+                margin-top: 0px;
+            }
+        }
+    </style>
+    <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+    crossorigin="anonymous"
+  />
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+  />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+<script>
+    function verifyUser(){
+       var dataObj =  {"username":$("#name").val(), "password":$("#password").val()};
+       console.log("dataObj=",dataObj);
+       $.ajax({
+                url: "verifyUser",   //存取Json的網址             
+                type: "POST",
+                cache:false,
+                dataType: 'json',
+                data:JSON.stringify(dataObj),
+                contentType: "application/json",
+                success: function (data) {
+                    console.log(data)
+                    if (data.errorCode == 0){
+                        location.href = "/"
+                    }else{
+                        alert("帳號或密碼錯誤")
+                    }
+                },
+
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(xhr.status);
+                    alert(thrownError);
+                }
+            });
+    }
+</script>
+<body>
+    <div class="container_self">
+            <div class="left">
+                <img src="/asset/img/6.jpg" width="400px">
+            </div>
+                <div class="login">
+                    <div class="head">
+                    <h1 style="text-align: center;">登入</h1>
+                    </div>
+                    <div class="pwd">
+                        帳號:<br>
+                        <input id="name" type="text" /><br>
+                        密碼:<br>
+                        <input id="password" type="password" /><br>
+                        <a href="" >忘記密碼</a><br>
+                        <a href="/loginGoogle" >google登入</a>
+                        <div style="margin-top: 20px; margin-left: 130px;">
+                            <button type="button" class="btn btn-primary" onclick="verifyUser();">登入</button>    
+                        </div>
+                </div>   
+            </div>
+    </div>
+</body>
+</html>

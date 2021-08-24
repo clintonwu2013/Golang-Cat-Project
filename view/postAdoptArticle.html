@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    
+  </head>
+  <style>
+    body{
+      padding: 0px;
+      margin: 0px;
+    }
+    .demo-bg {
+      width: 100%;
+      height: auto;
+    }
+    .demo-content {
+      position: relative;
+    }
+    .post_title a{
+      color:#ff9900;
+      font-weight:bold;
+      font-size: 2em;
+
+    }
+  </style>
+  <script>
+    $(function(){
+	  
+      checkLoggedIn();
+
+    });
+    function logout(){
+      $.ajax({
+              url: "/logout",   //存取Json的網址             
+              type: "POST",
+              cache:false,
+              success: function (data) {
+                  console.log(data)
+                  location.href = "/"
+              },
+
+              error: function (xhr, ajaxOptions, thrownError) {
+                  alert(xhr.status);
+                  alert(thrownError);
+              }
+        });
+    }
+    function checkLoggedIn(){
+      $.ajax({
+              url: "/checkLoggedIn",   //存取Json的網址             
+              type: "GET",
+              cache:false,
+              success: function (data) {
+                  console.log(data)
+                  if (data.errorCode == 0){
+                      $("#usernameArea").html("Hi~~, "+ data.username);
+                      $("#loginButton").hide();
+                      $("#logoutButton").show();
+                  }else{
+                      location.href="login";
+                  }
+              },
+
+              error: function (xhr, ajaxOptions, thrownError) {
+                  alert(xhr.status);
+                  alert(thrownError);
+              }
+        });
+    }
+
+
+    
+
+    function saveAdoptArticle(){
+        console.log("i am herrrr");
+        var formData = new FormData($('#uploadForm')[0]);
+        console.log(formData);
+        console.log("i am herrrr222");
+        
+        $.ajax({
+                type: 'post', 
+                url: "/createAdoptArticle", 
+                data: formData, 
+                cache: false, 
+                processData: false, 
+                contentType: false,
+              success: function (data) {
+                  console.log(data);
+                  if(data.errorCode == 0){
+                      alert("送養文儲存成功!");
+                      location.href="/";
+                  }else{
+                      alert("送養文儲存失敗,原因:"+data.message);
+                  }
+              },
+
+              error: function (xhr, ajaxOptions, thrownError) {
+                  alert(xhr.status);
+                  alert(thrownError);
+              }
+        });
+    }
+  
+  
+  </script>
+ <body >
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="nav-link" href="/" style="color:#ff9900;font-weight:bold;">遇見百分百的喵</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">關於本站 </a>
+          </li>
+          <li class="nav-item active" >
+            <a class="nav-link" href="/postAdoptArticle">我要po送養文</a>
+          </li>
+        </ul>
+          <div id="usernameArea"></div>
+          <button class="btn btn-danger my-2 my-sm-0" id="loginButton" onclick="location.href = 'login'">註冊/登入</button>
+          <button id="logoutButton" style="display:none;" id="logoutButton" class="btn btn-danger" onclick="logout();">登出</button>
+        
+      </div>
+    </nav>
+
+    
+    <div class="container">
+        <h2>貓貓送養文</h2>
+        <form id="uploadForm" enctype="multipart/form-data">
+            
+            <div class="form-group">
+                <label for="title">標題:</label>
+                <input type="text" class="form-control" name="title" id="title" placeholder="標題">
+            </div>
+
+            <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="city">所在縣市:</label>
+                <input type="text" class="form-control" name="city" id="city" placeholder="所在縣市">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="area">所在 區 / 市 / 鎮 / 鄉 (行政區): </label>
+                <input type="text" class="form-control" name="area" id="area" placeholder="所在 區 / 市 / 鎮 / 鄉 (行政區):">
+            </div>
+            </div>
+            <div class="form-group">
+            <label for="catName">貓貓名子:</label>
+            <input type="text" class="form-control" name="catName" id="catName" placeholder="貓貓名子">
+            </div>
+            <div class="form-group">
+            <label for="catAge">貓貓的出生日（年齡）:</label>
+            <input type="text" class="form-control" name="catAge" id="catAge" placeholder="貓貓的出生日（年齡）">
+            </div>
+            
+            <div class="form-group">
+                <label for="catPersonality">貓貓個性略述:</label>
+                <input type="text" class="form-control" name="catPersonality" id="catPersonality">
+            </div>
+
+            <div class="form-group" >
+                <label for="catStory">貓貓的故事 / 詳細認養條件描述: </label>
+                <textarea type="textarea" class="form-control" name="catStory" id="catStory" rows="5" cols="50"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="catPicture">貓貓的照片:</label>
+                <input type="file" class="form-control" name="catPicture"  id="catPicture">
+            </div>
+            
+            
+            <button type="button" onclick="saveAdoptArticle();" class="btn btn-primary">送出</button>
+        </form>
+    </div>
+
+    <footer class="bg-light text-center text-lg-start" style="margin-top:30px">
+      <!-- Copyright -->
+      <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        © 2021 Copyright: Tsung-Lin Wu
+      </div>
+      <!-- Copyright -->
+    </footer>
+  </body>
+</html>

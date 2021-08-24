@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    
+  </head>
+  <style>
+    body{
+      padding: 0px;
+      margin: 0px;
+    }
+    .demo-bg {
+      width: 100%;
+      height: auto;
+    }
+    .demo-content {
+      position: relative;
+    }
+    .post_title a{
+      color:#ff9900;
+      font-weight:bold;
+      font-size: 2em;
+
+    }
+    .images{
+      height: 150px;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    .ellipsis {
+      overflow:hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      white-space: normal;
+    }
+  </style>
+  <script>
+    $(function(){
+	  
+      checkLoggedIn();
+      getAllAdoptArticles(1);
+
+    });
+
+    function getAllAdoptArticles(page){
+      $.ajax({
+              url: "/allAdoptArticles?page="+page,   //存取Json的網址             
+              type: "GET",
+              cache:false,
+              dataType:"json",
+              success: function (data) {
+                displayPostData(data);
+                displayPaging(data);
+                toTop();
+              },
+
+              error: function (xhr, ajaxOptions, thrownError) {
+                  alert(xhr.status);
+                  alert(thrownError);
+              }
+        });
+    }
+
+    function toTop(){
+      var topH1 = document.getElementById("mainContent")
+      document.documentElement.scrollTop=topH1.offsetTop 
+      window.pageYOffset=topH1.offsetTop 
+      document.body.scrollTop=topH1.offsetTop ;
+   }
+
+    function displayPaging(data){
+      console.log(data);
+      var currentPage = data.currentPage;
+      var totalPage = data.totalPage;
+      var previousPage = currentPage-1;
+      if (previousPage < 1){
+        previousPage=1;
+      }
+      var nextPage = currentPage+1;
+      if (nextPage >totalPage){
+        nextPage = totalPage;
+      }
+      var htmlPaging = 
+      `<nav aria-label="..." style="margin-top:30px">`
+          +`<ul class="pagination">`
+             +`<li class="page-item">
+                  <a class="page-link" onclick="getAllAdoptArticles(${previousPage});">Previous</a>
+              </li>`;
+      for(let i=1; i<=totalPage; i++){
+        if(i!=currentPage){
+             htmlPaging += `<li class="page-item"><a class="page-link" onclick="getAllAdoptArticles(${i});">`+i+`</a></li>`;
+        }else{
+          htmlPaging += `<li class="page-item active">
+                             <span class="page-link">`
+                             +i+
+                              `<span class="sr-only">(current)</span>
+                             </span>
+                        </li>`;
+        }
+      }
+      htmlPaging += 
+               `<li class="page-item">
+                   <a class="page-link" onclick="getAllAdoptArticles(${nextPage});">Next</a>
+                </li>
+              </ul>
+         </nav>`;
+
+      $("#paging").html(htmlPaging);
+      
+    }
+    function displayPostData(data){
+        var html = ``; 
+        var adoptPosts = data.adoptPosts
+        for (let i=0; i <adoptPosts.length; i++){
+            if(i%3 == 0){
+              html += `<div class="row">`;
+            }
+                  html += 
+                  `<div class="col-lg-4  col-sm-12" >`+
+                       `<div class="container-fluid" style="padding-left: 0px;padding-top: 30px;">`+
+                            `<a href="" style="color:#ff9900;font-weight:bold;font-size: 1.2em;">`+adoptPosts[i].title+`</a>`+
+                       `</div>`+      
+                       `<div class="container-fluid">`+
+                          `<div class="row">`+
+                              `<div class="col-5" style="padding: 0px;">`+
+                                   `<img class="images" src="/asset/post_img/`+adoptPosts[i].id+`.png">`+
+                              `</div>`+
+                  
+                              `<div class="col-7" >`+
+                                   `<div style="font-size: 0.8em;">`+adoptPosts[i].city+`</div>`+
+                                   `<div style="font-size: 0.8em;"><span style="font-weight:bold;">`+adoptPosts[i].catName+`</span>, `+adoptPosts[i].catAge+`了</div>`+
+                                   `<div class="ellipsis" style="font-size: 0.8em;">`+adoptPosts[i].catStory+`</div>`+
+                                    `<div style="font-size: 0.8em;position:absolute; bottom:0; right:40px;"><a href=""><b>更多資訊&gt;&gt;</b></a></div>`+
+                               `</div>
+                          </div>
+                       </div>
+                </div>`
+        if(i%3 == 2){
+            html += `</div>`;
+        }
+      }
+                
+      if(adoptPosts.length%3 != 2){
+          html += `</div>`;
+      }
+      $("#mainContent").html(html);
+              
+    }
+
+    function logout(){
+      $.ajax({
+              url: "/logout",   //存取Json的網址             
+              type: "POST",
+              cache:false,
+              success: function (data) {
+                  console.log(data);
+                  location.href = "/"
+              },
+
+              error: function (xhr, ajaxOptions, thrownError) {
+                  alert(xhr.status);
+                  alert(thrownError);
+              }
+        });
+    }
+    function checkLoggedIn(){
+      $.ajax({
+              url: "/checkLoggedIn",   //存取Json的網址             
+              type: "GET",
+              cache:false,
+              success: function (data) {
+                  console.log(data)
+                  if (data.errorCode == 0){
+                      $("#usernameArea").html("Hi~~, "+ data.username);
+                      $("#loginButton").hide();
+                      $("#logoutButton").show();
+                  }
+              },
+
+              error: function (xhr, ajaxOptions, thrownError) {
+                  alert(xhr.status);
+                  alert(thrownError);
+              }
+        });
+    }
+  
+  
+  </script>
+ <body >
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="nav-link" href="/" style="color:#ff9900;font-weight:bold;">遇見百分百的喵</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="#">關於本站 </a>
+          </li>
+          <li class="nav-item active" >
+            <a class="nav-link" href="/postAdoptArticle">我要po送養文</a>
+          </li>
+        </ul>
+          <div id="usernameArea"></div>
+          <button class="btn btn-danger my-2 my-sm-0" id="loginButton" onclick="location.href = 'login'">註冊/登入</button>
+          <button id="logoutButton" style="display:none;" id="logoutButton" class="btn btn-danger" onclick="logout();">登出</button>
+        
+      </div>
+    </nav>
+
+    <div style="padding: 0px;margin: 0px;" class="container-fluid">
+      <img
+      class="demo-bg"
+      src="/asset/img/raise_cat3.jpg"
+      alt=""
+     >
+    </div>
+
+
+    <div id="mainContent" class="container">
+    </div>
+    
+    <div id="paging" class="container">
+    </div>
+
+
+
+    <footer class="bg-light text-center text-lg-start" style="margin-top:30px">
+      <!-- Copyright -->
+      <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        © 2021 Copyright: Tsung-Lin Wu
+      </div>
+      <!-- Copyright -->
+    </footer>
+  </body>
+</html>
