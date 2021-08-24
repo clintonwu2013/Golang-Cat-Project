@@ -10,29 +10,31 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/lib/pq"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
 
-const (
+var (
 	// Initialize connection constants.
 	HOST     = "localhost"
 	DATABASE = "cat_db"
 	USER     = "postgres"
-	PASSWORD = ""
+	PASSWORD = os.Getenv("PASSWORD")
 )
 
 var (
 	db                *sql.DB
 	googleOauthConfig = &oauth2.Config{
 		RedirectURL:  "http://localhost:8080/callback",
-		ClientID:     "",
-		ClientSecret: "",
+		ClientID:     os.Getenv("ClientID"),
+		ClientSecret: os.Getenv("ClientSecret"),
 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
 		Endpoint:     google.Endpoint,
 	}
