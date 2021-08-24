@@ -20,3 +20,25 @@ type AdoptPostModel struct {
 	Cat_personality string `json:"catPersonality"`
 	Cat_story       string `json:"catStory"`
 }
+
+type CreateUserRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type ModifyUserRequest struct {
+	Id       int    `json:"id"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type User struct {
+	Id       int
+	Name     string
+	Password string
+}
+
+type VerifyUserRequest struct {
+	Name     string `json:"username"`
+	Password string `json:"password"`
+}

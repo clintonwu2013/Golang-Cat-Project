@@ -39,28 +39,6 @@ var (
 	randomState = "random"
 )
 
-type createUserRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-type modifyUserRequest struct {
-	Id       int    `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-type User struct {
-	Id       int
-	Name     string
-	Password string
-}
-
-type verifyUserRequest struct {
-	Name     string `json:"username"`
-	Password string `json:"password"`
-}
-
 func init() {
 	err := initDB()
 	checkError(err)
@@ -315,7 +293,7 @@ func checkLoggedInHandler(c *gin.Context) {
 	})
 }
 func verifyUserHandler(c *gin.Context) {
-	var verifyUserReq verifyUserRequest
+	var verifyUserReq model.VerifyUserRequest
 	err := c.ShouldBindJSON(&verifyUserReq)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -359,7 +337,7 @@ func verifyUserHandler(c *gin.Context) {
 
 }
 func createUserHandler(c *gin.Context) {
-	var createUserReq createUserRequest
+	var createUserReq model.CreateUserRequest
 	err := c.ShouldBindJSON(&createUserReq)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -385,7 +363,7 @@ func createUserHandler(c *gin.Context) {
 }
 
 func modifyUserHandler(c *gin.Context) {
-	var modifyUserReq modifyUserRequest
+	var modifyUserReq model.ModifyUserRequest
 	err := c.ShouldBindJSON(&modifyUserReq)
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -411,7 +389,7 @@ func modifyUserHandler(c *gin.Context) {
 }
 
 func queryUserHandler(c *gin.Context) {
-	var myUser User
+	var myUser model.User
 	userSql := "SELECT id, username, password FROM users WHERE id = $1"
 
 	err := db.QueryRow(userSql, 1).Scan(&myUser.Id, &myUser.Name, &myUser.Password)
