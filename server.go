@@ -91,7 +91,7 @@ func main() {
 	r.POST("/createUser", createUserHandler)
 	r.POST("/modifyUser", modifyUserHandler)
 	r.POST("/verifyUser", verifyUserHandler)
-	r.POST("/logout", loggedInHandler)
+	r.POST("/logout", logOutHandler)
 
 	r.POST("/createAdoptArticle", createAdoptArticleHandler)
 
@@ -267,9 +267,10 @@ func callbackHandler(c *gin.Context) {
 	c.Redirect(http.StatusTemporaryRedirect, "/")
 }
 
-func loggedInHandler(c *gin.Context) {
+func logOutHandler(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Delete("loginuser")
+	session.Delete("userId")
 	session.Clear()
 	session.Save()
 	c.JSON(200, gin.H{
