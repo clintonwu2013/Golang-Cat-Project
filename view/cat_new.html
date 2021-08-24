@@ -57,13 +57,13 @@
   </style>
   <script>
     $(function(){
-	  
+      
       checkLoggedIn();
-      getAllAdoptArticles(1);
+      getAllAdoptArticles(1,true);
 
     });
 
-    function getAllAdoptArticles(page){
+    function getAllAdoptArticles(page,firstComeBy){
       $.ajax({
               url: "/allAdoptArticles?page="+page,   //存取Json的網址             
               type: "GET",
@@ -72,7 +72,9 @@
               success: function (data) {
                 displayPostData(data);
                 displayPaging(data);
-                toTop();
+                if(!firstComeBy){
+                  toTop();
+                }
               },
 
               error: function (xhr, ajaxOptions, thrownError) {
