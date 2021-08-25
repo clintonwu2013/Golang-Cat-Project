@@ -74,7 +74,7 @@ func checkError(err error) {
 func main() {
 	r := gin.Default()
 	r.LoadHTMLGlob("view/*")
-	r.Static("/asset", "./asset")
+	r.Static("asset", "./asset")
 
 	store := sessions.NewCookieStore([]byte("secret"))
 	r.Use(sessions.Sessions("mysession", store))
@@ -215,7 +215,7 @@ func loginHandler(c *gin.Context) {
 
 func HelloWorld(c *gin.Context) {
 	c.JSON(200, gin.H{
-		"message": "HelloWorld",
+		"message": "HelloWorld test airdd",
 	})
 }
 
