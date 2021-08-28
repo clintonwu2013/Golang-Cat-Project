@@ -86,6 +86,9 @@ func main() {
 	r.GET("/callback", callbackHandler)
 	r.GET("/postAdoptArticle", postAdoptArticleHandler)
 
+	r.GET("/catHTMLVue", catHTMLVueJSHandler)
+	r.GET("/catInfo", catInfoHandler)
+
 	r.GET("/allAdoptArticles", allAdoptArticlesHandler)
 
 	r.POST("/createUser", createUserHandler)
@@ -101,6 +104,50 @@ func main() {
 	r.Run() // listen and serve (for windows "http://localhost:8080")
 }
 
+func catHTMLVueJSHandler(c *gin.Context) {
+	postIdStr := c.Query("postId")
+	if postIdStr == "" {
+		postIdStr = "1"
+	}
+	postId, err := strconv.Atoi(postIdStr)
+	if err != nil {
+		c.JSON(200, gin.H{
+			"errorCode": -1,
+			"message":   err.Error(),
+		})
+		return
+	}
+
+	session := sessions.Default(c)
+	session.Set("postId", postId)
+	session.Save()
+
+	c.HTML(http.StatusOK, "cat_info_vueJS.html", nil)
+}
+
+func catInfoHandler(c *gin.Context) {
+
+	session := sessions.Default(c)
+	postIdSession := session.Get("postId")
+	postId := 1
+	if postIdSession != nil {
+		postId = postIdSession.(int)
+	}
+
+	var catPost model.AdoptPostModel
+	row := db.QueryRow("select id,author_id, title, city, area, cat_name, cat_age,cat_personality,cat_story from cat_adopt_posts where id =$1", postId)
+	err := row.Scan(&catPost.Id, &catPost.Author_id, &catPost.Title, &catPost.City, &catPost.Area, &catPost.Cat_name, &catPost.Cat_age, &catPost.Cat_personality, &catPost.Cat_story)
+	if err != nil {
+		c.JSON(200, gin.H{
+			"errorCode": -1,
+			"message":   err.Error(),
+		})
+	}
+	c.JSON(200, gin.H{
+		"errorCode": 0,
+		"catPost":   catPost,
+	})
+}
 func createAdoptArticleHandler(c *gin.Context) {
 
 	session := sessions.Default(c)

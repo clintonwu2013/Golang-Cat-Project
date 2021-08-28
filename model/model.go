@@ -11,7 +11,7 @@ type CreateAdoptArticleRequest struct {
 
 type AdoptPostModel struct {
 	Id              int    `json:"id" db:"id"`
-	Author_id       string `json:"authorId"`
+	Author_id       int `json:"authorId"`
 	Title           string `json:"title"`
 	City            string `json:"city"`
 	Area            string `json:"area"`

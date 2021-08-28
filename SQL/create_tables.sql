@@ -4,7 +4,7 @@ create TABLE users(
    id integer NOT NULL GENERATED ALWAYS AS IDENTITY primary key,
    username varchar(50) unique,
    password varchar(50),
-   email  varchar(50)
+   name  varchar(50)
 );
 
 CREATE TABLE cat_adopt_posts

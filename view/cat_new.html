@@ -141,7 +141,7 @@
                   html += 
                   `<div class="col-lg-4  col-sm-12" >`+
                        `<div class="container-fluid" style="padding-left: 0px;padding-top: 30px;">`+
-                            `<a href="" style="color:#ff9900;font-weight:bold;font-size: 1.2em;">`+adoptPosts[i].title+`</a>`+
+                            `<a href="/catHTMLVue?postId=${adoptPosts[i].id}" style="color:#ff9900;font-weight:bold;font-size: 1.2em;">`+adoptPosts[i].title+`</a>`+
                        `</div>`+      
                        `<div class="container-fluid">`+
                           `<div class="row">`+
@@ -153,7 +153,7 @@
                                    `<div style="font-size: 0.8em;">`+adoptPosts[i].city+`</div>`+
                                    `<div style="font-size: 0.8em;"><span style="font-weight:bold;">`+adoptPosts[i].catName+`</span>, `+adoptPosts[i].catAge+`了</div>`+
                                    `<div class="ellipsis" style="font-size: 0.8em;">`+adoptPosts[i].catStory+`</div>`+
-                                    `<div style="font-size: 0.8em;position:absolute; bottom:0; right:40px;"><a href=""><b>更多資訊&gt;&gt;</b></a></div>`+
+                                    `<div style="font-size: 0.8em;position:absolute; bottom:0; right:40px;"><a href="/catHTMLVue?postId=${adoptPosts[i].id}"><b>更多資訊&gt;&gt;</b></a></div>`+
                                `</div>
                           </div>
                        </div>
