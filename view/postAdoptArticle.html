@@ -70,7 +70,7 @@
               success: function (data) {
                   console.log(data)
                   if (data.errorCode == 0){
-                      $("#usernameArea").html("Hi~~, "+ data.username);
+                      $("#usernameArea").html("Hi~~, "+ data.name);
                       $("#loginButton").hide();
                       $("#logoutButton").show();
                   }else{
@@ -90,10 +90,8 @@
     
 
     function saveAdoptArticle(){
-        console.log("i am herrrr");
         var formData = new FormData($('#uploadForm')[0]);
         console.log(formData);
-        console.log("i am herrrr222");
         
         $.ajax({
                 type: 'post', 
@@ -144,8 +142,8 @@
     </nav>
 
     
-    <div class="container">
-        <h2>貓貓送養文</h2>
+    <div class="container" style="padding-top:20px">
+        <h2><b>貓貓送養文</b></h2>
         <form id="uploadForm" enctype="multipart/form-data">
             
             <div class="form-group">
@@ -173,8 +171,13 @@
             </div>
             
             <div class="form-group">
-                <label for="catPersonality">貓貓個性略述:</label>
-                <input type="text" class="form-control" name="catPersonality" id="catPersonality">
+              <label for="contactInfo">電話/聯絡方式:</label>
+              <textarea type="textarea" type="text" class="form-control" name="contactInfo" id="contactInfo" rows="3" cols="50"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="catPersonality">貓貓個性略述:</label>
+              <textarea type="textarea" class="form-control" name="catPersonality" id="catPersonality" rows="5" cols="50"></textarea>
             </div>
 
             <div class="form-group" >

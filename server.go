@@ -135,8 +135,8 @@ func catInfoHandler(c *gin.Context) {
 	}
 
 	var catPost model.AdoptPostModel
-	row := db.QueryRow("select id,author_id, title, city, area, cat_name, cat_age,cat_personality,cat_story from cat_adopt_posts where id =$1", postId)
-	err := row.Scan(&catPost.Id, &catPost.Author_id, &catPost.Title, &catPost.City, &catPost.Area, &catPost.Cat_name, &catPost.Cat_age, &catPost.Cat_personality, &catPost.Cat_story)
+	row := db.QueryRow("select id,author_id, title, city, area, cat_name, cat_age,cat_personality,cat_story, contact_info from cat_adopt_posts where id =$1", postId)
+	err := row.Scan(&catPost.Id, &catPost.Author_id, &catPost.Title, &catPost.City, &catPost.Area, &catPost.Cat_name, &catPost.Cat_age, &catPost.Cat_personality, &catPost.Cat_story, &catPost.Contact_info)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"errorCode": -1,
@@ -163,7 +163,7 @@ func createAdoptArticleHandler(c *gin.Context) {
 	}
 
 	var id int
-	err := db.QueryRow(`INSERT INTO cat_adopt_posts(city, area,cat_name,cat_age,cat_personality,cat_story,title,author_id) VALUES ($1, $2, $3,$4,$5,$6,$7,$8) returning id`, c.PostForm("city"), c.PostForm("area"), c.PostForm("catName"), c.PostForm("catAge"), c.PostForm("catPersonality"), c.PostForm("catStory"), c.PostForm("title"), userID.(int)).Scan(&id)
+	err := db.QueryRow(`INSERT INTO cat_adopt_posts(city, area,cat_name,cat_age,cat_personality,cat_story,title,author_id,contact_info) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9) returning id`, c.PostForm("city"), c.PostForm("area"), c.PostForm("catName"), c.PostForm("catAge"), c.PostForm("catPersonality"), c.PostForm("catStory"), c.PostForm("title"), userID.(int), c.PostForm("contactInfo")).Scan(&id)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"errorCode": -1,
@@ -300,15 +300,17 @@ func callbackHandler(c *gin.Context) {
 		Name  string
 	}
 	var userInfo userInfoStruct
+	fmt.Println("########## content =", string(content))
 	json.Unmarshal(content, &userInfo)
 	session := sessions.Default(c)
 	session.Set("loginuser", userInfo.Email)
 
 	// insert google login user
 	var userId int
-	db.Exec(`INSERT INTO users(username, password) VALUES ($1, $2)`, userInfo.Email, "")
+	db.Exec(`INSERT INTO users(username, password,name) VALUES ($1, $2,$3)`, userInfo.Email, "123123", userInfo.Name)
 	db.QueryRow("select id from users where username=$1", userInfo.Email).Scan(&userId)
 	session.Set("userId", userId)
+	session.Set("username", userInfo.Email)
 	session.Save()
 
 	c.Redirect(http.StatusTemporaryRedirect, "/")
@@ -328,6 +330,8 @@ func logOutHandler(c *gin.Context) {
 func checkLoggedInHandler(c *gin.Context) {
 	session := sessions.Default(c)
 	username := session.Get("loginuser")
+	name := ""
+	db.QueryRow("SELECT NAME FROM users where username=$1", username).Scan(&name)
 
 	if username == nil {
 		c.JSON(200, gin.H{
@@ -340,6 +344,7 @@ func checkLoggedInHandler(c *gin.Context) {
 		"errorCode": 0,
 		"message":   "logged in",
 		"username":  username,
+		"name":      name,
 	})
 }
 func verifyUserHandler(c *gin.Context) {

@@ -72,8 +72,13 @@
                 axios.get('/catInfo')
                 .then( (res) => {
                     this.catPost = res.data.catPost;
+                    console.log("this.catPost=",this.catPost)
                     this.catPost.imgSrc = "asset/post_img/"+res.data.catPost.id+".png";
-                    
+
+                    this.catPost.catStory = res.data.catPost.catStory.replace(/\r\n|\n/g,"<br>");
+                    this.catPost.catPersonality = res.data.catPost.catPersonality.replace(/\r\n|\n/g,"<br>");
+                    this.catPost.contactInfo = res.data.catPost.contactInfo.replace(/\r\n|\n/g,"<br>");
+            
                 }); 
             }
         })
@@ -104,7 +109,7 @@
             success: function (data) {
                 console.log(data)
                 if (data.errorCode == 0){
-                    $("#usernameArea").html("Hi~~, "+ data.username);
+                    $("#usernameArea").html("Hi~~, "+ data.name);
                     $("#loginButton").hide();
                     $("#logoutButton").show();
                 }
@@ -141,24 +146,65 @@
     </div>
 </nav>
 
-<div id="mainContent" class="container">
+<div id="mainContent" class="container" style="background-color: #FFFCEC; padding-top: 20px;padding-bottom: 20px;">
 
-    <h2>${catPost.title}</h2>
+    <h2><b>${catPost.title}</b></h2>
     <div class="row">
-        <div class="col-5">
-            <img v-bind:src="catPost.imgSrc" width="100%">
+        <div class="col-lg-8 col-md-12">
+            <img v-bind:src="catPost.imgSrc"  style="height:auto;width:100%">
         </div>
-        <div class="col-7">
-            ${catPost.city}<br>
-            ${catPost.area}<br>
-            ${catPost.catName}<br>
-            ${catPost.catAge}<br>
-            ${catPost.catPersonality}
+        <div class="col-lg-4 col-md-12">
+            <b>所在縣市:</b><br>
+            ${catPost.city}<br><br>
+
+            <b>所在 區 / 市 / 鎮 / 鄉 (行政區): </b><br>
+            ${catPost.area}<br><br>
+
+            <b>動物小名:</b><br>
+            ${catPost.catName}<br><br>
+
+            <b>動物的出生日（年齡）:</b><br>
+            ${catPost.catAge}了<br><br>
+
+            <b>動物個性略述:</b><br> 
+            <p v-html="catPost.catPersonality"></p><br>
         </div>
     </div>
-    <div class="row">
-        ${catPost.catStory}<br>
-        聯絡:${catPost.authorId}
+    <div class="row" style="margin-top: 20px;">
+      
+        <div class="col-12"><b><font size="4">認養資訊</font></b></div>
+        <div class="col-6" style="padding-left:0">
+            <div class="container-fluid" >
+                <div class="row">
+                    <div class="col-lg-2 col-md-12" style="padding-right:0px" >
+                        <b>認養條件:</b>
+                    </div>
+                    <div class="col-lg-10 col-md-12">
+                        須年滿20歲<br>
+                        須同意絕育<br>
+                        須家人同意<br>
+                        須同意簽認養切結書<br>
+                        須同意後續追蹤<br>
+                    </div>
+                </div>
+            </div>
+        
+        </div>
+
+    </div>
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-12">
+            <b>動物的故事 / 詳細認養條件描述: </b><br>
+            <p v-html="catPost.catStory"></p>
+            <br>
+            
+            <b>聯絡人:</b><br>
+            ${catPost.authorId}
+            <br>
+            <br>
+            <b>電話/聯絡方式:</b><br>
+            <p v-html="catPost.contactInfo"></p>
+        </div>
     </div>
 
 </div>
@@ -167,7 +213,7 @@
 
 
 
-<footer class="bg-light text-center text-lg-start" style="margin-top:30px">
+<footer class="bg-light text-center text-lg-start">
     <!-- Copyright -->
     <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
         © 2021 Copyright: Tsung-Lin Wu

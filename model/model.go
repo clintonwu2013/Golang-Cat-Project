@@ -11,7 +11,7 @@ type CreateAdoptArticleRequest struct {
 
 type AdoptPostModel struct {
 	Id              int    `json:"id" db:"id"`
-	Author_id       int `json:"authorId"`
+	Author_id       int    `json:"authorId"`
 	Title           string `json:"title"`
 	City            string `json:"city"`
 	Area            string `json:"area"`
@@ -19,6 +19,7 @@ type AdoptPostModel struct {
 	Cat_age         string `json:"catAge"`
 	Cat_personality string `json:"catPersonality"`
 	Cat_story       string `json:"catStory"`
+	Contact_info    string `json:"contactInfo"`
 }
 
 type CreateUserRequest struct {
