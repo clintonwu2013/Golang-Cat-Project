@@ -89,6 +89,8 @@ func main() {
 	r.GET("/catHTMLVue", catHTMLVueJSHandler)
 	r.GET("/catInfo", catInfoHandler)
 
+	r.GET("/about", aboutHandler)
+
 	r.GET("/allAdoptArticles", allAdoptArticlesHandler)
 
 	r.POST("/createUser", createUserHandler)
@@ -125,6 +127,9 @@ func catHTMLVueJSHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "cat_info_vueJS.html", nil)
 }
 
+func aboutHandler(c *gin.Context) {
+	c.HTML(http.StatusOK, "about.html", nil)
+}
 func catInfoHandler(c *gin.Context) {
 
 	session := sessions.Default(c)
