@@ -88,8 +88,63 @@
 
 
     
+    function checkAdoptPostForm(){
+      let title = $("#title").val();
+      let city = $("#city").val();
+      let area = $("#area").val();
+      let catName = $("#catName").val();
+      let catAge = $("#catAge").val();
+      let contactInfo = $("#contactInfo").val();
+      let catPersonality = $("#catPersonality").val();
+      let catStory = $("#catStory").val();
+      let catPicture = $('#catPicture').get(0).files[0];
+	    console.info(catPicture);
+      if (!title){
+        alert("標題不可空白!");
+        return false;
+      }
 
+      if (!city){
+        alert("所在縣市不可空白!");
+        return false;
+      }
+
+      if (!area){
+        alert("所在 區 / 市 / 鎮 / 鄉 (行政區)不可空白!");
+        return false;
+      }
+
+      if (!catName){
+        alert("貓貓名子不可空白!");
+        return false;
+      }
+      if (!catAge){
+        alert("貓貓的出生日（年齡）不可空白!");
+        return false;
+      }
+      if (!contactInfo){
+        alert("電話/聯絡方式不可空白!");
+        return false;
+      }
+      if (!catPersonality){
+        alert("貓貓個性略述不可空白!");
+        return false;
+      }
+      if (!catStory){
+        alert("貓貓的故事 / 詳細認養條件描述不可空白!");
+        return false;
+      }
+      if(!catPicture){
+        alert("請上傳貓貓的照片!");
+        return false;
+      }
+      
+      return true;
+    }
     function saveAdoptArticle(){
+        if(!checkAdoptPostForm()){
+          return false;
+        };
         var formData = new FormData($('#uploadForm')[0]);
         console.log(formData);
         
@@ -147,46 +202,46 @@
         <form id="uploadForm" enctype="multipart/form-data">
             
             <div class="form-group">
-                <label for="title">標題:</label>
+                <label for="title">標題:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
                 <input type="text" class="form-control" name="title" id="title" placeholder="標題">
             </div>
 
             <div class="form-row">
             <div class="form-group col-md-6">
-                <label for="city">所在縣市:</label>
+                <label for="city">所在縣市:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
                 <input type="text" class="form-control" name="city" id="city" placeholder="所在縣市">
             </div>
             <div class="form-group col-md-6">
-                <label for="area">所在 區 / 市 / 鎮 / 鄉 (行政區): </label>
+                <label for="area">所在 區 / 市 / 鎮 / 鄉 (行政區): <p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
                 <input type="text" class="form-control" name="area" id="area" placeholder="所在 區 / 市 / 鎮 / 鄉 (行政區):">
             </div>
             </div>
             <div class="form-group">
-            <label for="catName">貓貓名子:</label>
+            <label for="catName">貓貓名子:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
             <input type="text" class="form-control" name="catName" id="catName" placeholder="貓貓名子">
             </div>
             <div class="form-group">
-            <label for="catAge">貓貓的出生日（年齡）:</label>
+            <label for="catAge">貓貓的出生日（年齡）:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
             <input type="text" class="form-control" name="catAge" id="catAge" placeholder="貓貓的出生日（年齡）">
             </div>
             
             <div class="form-group">
-              <label for="contactInfo">電話/聯絡方式:</label>
+              <label for="contactInfo">電話/聯絡方式:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
               <textarea type="textarea" type="text" class="form-control" name="contactInfo" id="contactInfo" rows="3" cols="50"></textarea>
             </div>
             
             <div class="form-group">
-              <label for="catPersonality">貓貓個性略述:</label>
+              <label for="catPersonality">貓貓個性略述:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
               <textarea type="textarea" class="form-control" name="catPersonality" id="catPersonality" rows="5" cols="50"></textarea>
             </div>
 
             <div class="form-group" >
-                <label for="catStory">貓貓的故事 / 詳細認養條件描述: </label>
+                <label for="catStory">貓貓的故事 / 詳細認養條件描述:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p> </label>
                 <textarea type="textarea" class="form-control" name="catStory" id="catStory" rows="5" cols="50"></textarea>
             </div>
 
             <div class="form-group">
-                <label for="catPicture">貓貓的照片:</label>
+                <label for="catPicture">貓貓的照片:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
                 <input type="file" class="form-control" name="catPicture"  id="catPicture">
             </div>
             

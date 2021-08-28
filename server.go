@@ -148,9 +148,12 @@ func catInfoHandler(c *gin.Context) {
 			"message":   err.Error(),
 		})
 	}
+	var authorName string
+	db.QueryRow("select name from users where id=$1", catPost.Author_id).Scan(&authorName)
 	c.JSON(200, gin.H{
-		"errorCode": 0,
-		"catPost":   catPost,
+		"errorCode":  0,
+		"catPost":    catPost,
+		"authorName": authorName,
 	})
 }
 func createAdoptArticleHandler(c *gin.Context) {

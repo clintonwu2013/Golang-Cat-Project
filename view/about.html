@@ -4,9 +4,52 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>關於本站</title>
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
+<style>
+    .demo-bg {
+      width: 100%;
+      height: auto;
+    }
+</style>
 <body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="nav-link" href="/" style="color:#ff9900;font-weight:bold;">遇見百分百的喵</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/about">關於本站 </a>
+            </li>
+            <li class="nav-item active" >
+              <a class="nav-link" href="/postAdoptArticle">我要po送養文</a>
+            </li>
+          </ul>
+            <div id="usernameArea" style="padding-right: 20px;"></div>
+            <button class="btn btn-danger my-2 my-sm-0" id="loginButton" onclick="location.href = 'login'">註冊/登入</button>
+            <button id="logoutButton" style="display:none;" id="logoutButton" class="btn btn-danger" onclick="logout();">登出</button>
+          
+        </div>
+      </nav>
+  
+      
     <h1><b>本站為測試網站，沒有貓咪可以領養喔!!!</b></h1><br>
     by author 吳宗霖 2021.08.28 19:24
 </body>
