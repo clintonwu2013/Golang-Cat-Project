@@ -23,9 +23,9 @@ import (
 
 var (
 	// Initialize connection constants.
-	HOST     = "localhost"
-	DATABASE = "cat_db"
-	USER     = "postgres"
+	HOST     = os.Getenv("HOST")
+	DATABASE = os.Getenv("DATABASE")
+	USER     = os.Getenv("USER")
 	PASSWORD = os.Getenv("PASSWORD")
 )
 
