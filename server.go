@@ -32,7 +32,7 @@ var (
 var (
 	db                *sql.DB
 	googleOauthConfig = &oauth2.Config{
-		RedirectURL:  "http://localhost:8080/callback",
+		RedirectURL:  os.Getenv("RedirectURL"),
 		ClientID:     os.Getenv("ClientID"),
 		ClientSecret: os.Getenv("ClientSecret"),
 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
