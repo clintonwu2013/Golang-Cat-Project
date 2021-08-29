@@ -261,16 +261,7 @@
             <div class="col-lg-4  col-sm-12" >
                 <div class="container-fluid" style="padding-left: 0px;padding-top: 30px;">
                     <div class="row">
-                        <div class="col-9"><a v-bind:href="adoptPosts[i].detailUrl" style="color:#ff9900;font-weight:bold;font-size: 1.2em;">${adoptPosts[i].title}</a> </div> 
-                        <div class="col-2">
-                            <button  class="btn btn-light btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                ...
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">編輯</a>
-                                <a class="dropdown-item" v-on:click="doDeletePost(adoptPosts[i].id)" >刪除</a>
-                            </div>
-                        </div>
+                        <div class="col-12"><a v-bind:href="adoptPosts[i].detailUrl" style="color:#ff9900;font-weight:bold;font-size: 1.2em;">${adoptPosts[i].title}</a> </div> 
                     </div>
                 </div>      
                 <div class="container-fluid">
@@ -281,9 +272,18 @@
            
                        <div class="col-7" >
                             <div style="font-size: 0.8em;">${adoptPosts[i].city}</div>
-                            <div style="font-size: 0.8em;"><span style="font-weight:bold;">${adoptPosts[i].catName}</span>, ${adoptPosts[i].catAge} 了</div>
+                            <div style="font-size: 0.8em;"><span style="font-weight:bold;">${adoptPosts[i].catName}</span>, ${adoptPosts[i].catAge} </div>
                             <div class="ellipsis" style="font-size: 0.8em;">${adoptPosts[i].catStory}</div>
-                            <div style="font-size: 0.8em;position:absolute; bottom:0; right:40px;"><a v-bind:href="adoptPosts[i].detailUrl"><b>更多資訊&gt;&gt;</b></a></div>
+                            <div style="font-size: 0.8em;position:absolute; bottom:0; right:40px;">
+                                <button  class="btn btn-light btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Edit
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="javascript:void(0);">編輯</a>
+                                    <a class="dropdown-item" href="javascript:void(0);" v-on:click="doDeletePost(adoptPosts[i].id)" >刪除</a>
+                                </div>
+                                <a v-bind:href="adoptPosts[i].detailUrl"><b>檢視貼文&gt;&gt;</b></a>
+                            </div>
                         </div>
                    </div>
                 </div>
