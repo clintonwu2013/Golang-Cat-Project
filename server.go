@@ -89,6 +89,8 @@ func main() {
 	r.GET("/catHTMLVue", catHTMLVueJSHandler)
 	r.GET("/catInfo", catInfoHandler)
 
+	r.GET("/managePosts", managePostsHandler)
+
 	r.GET("/about", aboutHandler)
 
 	r.GET("/allAdoptArticles", allAdoptArticlesHandler)
@@ -100,9 +102,13 @@ func main() {
 
 	r.POST("/createAdoptArticle", createAdoptArticleHandler)
 
+	r.GET("/getUserPosts", getUserPostsHandler)
+
 	r.GET("/User", queryUserHandler)
 	r.GET("/login", loginHandler)
 	r.GET("/checkLoggedIn", checkLoggedInHandler)
+
+	r.DELETE("/deleteAdoptPost", deleteAdoptPostHandler)
 	r.Run() // listen and serve (for windows "http://localhost:8080")
 }
 
@@ -154,6 +160,87 @@ func catInfoHandler(c *gin.Context) {
 		"errorCode":  0,
 		"catPost":    catPost,
 		"authorName": authorName,
+	})
+}
+
+func getUserPostsHandler(c *gin.Context) {
+	session := sessions.Default(c)
+	//sessionID := session.Get("loginuser")
+	userID := session.Get("userId")
+	fmt.Println("userid=", userID)
+	if userID == nil {
+		c.JSON(200, gin.H{
+			"errorCode": -1,
+			"message":   "請先登入",
+		})
+		return
+	}
+
+	pageStr := c.Query("page")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		c.JSON(200, gin.H{
+			"errorCode": -1,
+			"message":   err.Error(),
+		})
+	}
+	fmt.Println("page=", page)
+	var pageShowNum int = 12
+
+	rows, err := db.Query("SELECT id, author_id, title, city, area, cat_name, cat_age, cat_personality, cat_story FROM cat_adopt_posts where author_id=$3 order by id desc offset $1 limit $2", (page-1)*pageShowNum, pageShowNum, userID.(int))
+	if err != nil {
+		c.JSON(200, gin.H{
+			"errorCode": -1,
+			"message":   err.Error(),
+		})
+	}
+	var adoptPosts []model.AdoptPostModel
+	for rows.Next() {
+		var adoptPost model.AdoptPostModel
+		rows.Scan(&adoptPost.Id, &adoptPost.Author_id, &adoptPost.Title, &adoptPost.City, &adoptPost.Area, &adoptPost.Cat_name, &adoptPost.Cat_age, &adoptPost.Cat_personality, &adoptPost.Cat_story)
+		adoptPosts = append(adoptPosts, adoptPost)
+	}
+
+	var totalCount int
+	row := db.QueryRow("select count(*) from cat_adopt_posts where author_id=$1", userID.(int))
+	err = row.Scan(&totalCount)
+	totalPage := float64(totalCount) / float64(pageShowNum)
+
+	if err != nil {
+		c.JSON(200, gin.H{
+			"errorCode": -1,
+			"message":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"errorCode":   0,
+		"message":     "ok",
+		"adoptPosts":  adoptPosts,
+		"currentPage": page,
+		"totalPage":   int(math.Ceil(totalPage)),
+	})
+}
+func deleteAdoptPostHandler(c *gin.Context) {
+	var postId struct {
+		PostId int
+	}
+	c.ShouldBindJSON(&postId)
+	fmt.Println("postId=", postId.PostId)
+
+	_, err := db.Exec("delete from cat_adopt_posts where id =$1", postId.PostId)
+	if err != nil {
+		c.JSON(200, gin.H{
+			"errorCode": -1,
+			"message":   err.Error(),
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"errorCode":     0,
+		"message":       "delete adopt article success",
+		"deletedPostId": postId.PostId,
 	})
 }
 func createAdoptArticleHandler(c *gin.Context) {
@@ -241,6 +328,10 @@ func allAdoptArticlesHandler(c *gin.Context) {
 		"totalPage":   int(math.Ceil(totalPage)),
 	})
 
+}
+
+func managePostsHandler(c *gin.Context) {
+	c.HTML(http.StatusOK, "managePosts.html", nil)
 }
 func postAdoptArticleHandler(c *gin.Context) {
 	c.HTML(http.StatusOK, "postAdoptArticle.html", nil)

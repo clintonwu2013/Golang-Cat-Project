@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>遇見百分百的喵</title>
+    
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <style>
+    body{
+      padding: 0px;
+      margin: 0px;
+    }
+    .demo-bg {
+      width: 100%;
+      height: auto;
+    }
+    .demo-content {
+      position: relative;
+    }
+    .post_title a{
+      color:#ff9900;
+      font-weight:bold;
+      font-size: 2em;
+
+    }
+    .images{
+      height: 150px;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    .ellipsis {
+      overflow:hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      white-space: normal;
+    }
+  </style>
+  <script>
+    $(function(){
+      
+      checkLoggedIn();
+      //getAllAdoptArticles(1,true);
+
+      var mainContent = new Vue({
+            delimiters: ['${', '}'],
+            el: '#mainContent',
+            data: {
+                adoptPosts: '',
+                currentPage: '',
+                totalPage: '',
+                previousPage: '',
+                nextPage:''
+            },
+            methods:{
+                changePage(page){
+                    axios.get("/getUserPosts?page="+page)
+                    .then( (res) => {
+                        console.log("res.adoptPosts=",res.data.adoptPosts);
+                        this.adoptPosts = res.data.adoptPosts;
+                        console.log("this.adoptPosts=",this.adoptPosts)
+                        for(let i=0; i<this.adoptPosts.length; i++){
+                            this.adoptPosts[i].imgSrc = "asset/post_img/"+this.adoptPosts[i].id+".png"
+                            this.adoptPosts[i].detailUrl = "/catHTMLVue?postId="+this.adoptPosts[i].id;
+                        }
+                        
+                        this.currentPage = res.data.currentPage;
+                        this.totalPage = res.data.totalPage;
+                        this.previousPage = this.currentPage-1;
+                        if (this.previousPage <1){
+                            this.previousPage = 1;
+                        }
+                        this.nextPage = res.data.currentPage+1;
+                        if (this.nextPage >this.totalPage){
+                            this.nextPage = this.totalPage;
+                        }
+
+                        toTop();
+                        
+                    }); 
+                },
+                doDeletePost(postId){
+                    var yes = confirm('確定刪除嗎？');
+
+                    if (!yes) {
+                        return;
+                    } 
+                    //alert("do delete post="+postId);
+                    axios({
+                        method: 'DELETE',
+                        url: '/deleteAdoptPost',
+                        'Content-Type': 'application/json',
+                        data: {
+                            postId: postId,
+                        }
+                    })
+                    .then((result) => { 
+                        console.log("result.data=",result.data)
+                        if(result.data.errorCode != 0){
+                            alert("刪除失敗,原因:"+result.data.message);
+                            return;
+                        }
+                        alert("刪除成功!")
+                        console.log("result.data.deletedPostId=",result.data.deletedPostId);
+                        deletedPostId = result.data.deletedPostId;
+                        for(let i=0;i<this.adoptPosts.length;i++){
+                            console.log("this.adoptPosts[i].id=",this.adoptPosts[i].id);
+                            console.log("deletedPostId=",deletedPostId)
+                            if(this.adoptPosts[i].id == deletedPostId){
+                                this.adoptPosts.splice(i,1);
+                                return;
+                            }
+                        }
+                    })
+                    .catch((err) => { console.error(err) })
+                }
+
+            },
+            mounted(){
+                axios.get("/getUserPosts?page=1")
+                .then( (res) => {
+                    console.log("######## res=",res)
+                    if(res.data.errorCode != 0){
+                        alert(res.data.message);
+                        location.href="/login";
+                        return;
+                    }
+                    console.log("res.adoptPosts=",res.data.adoptPosts);
+                    this.adoptPosts = res.data.adoptPosts;
+                    console.log("this.adoptPosts=",this.adoptPosts)
+                    for(let i=0; i<this.adoptPosts.length; i++){
+                        this.adoptPosts[i].imgSrc = "asset/post_img/"+this.adoptPosts[i].id+".png"
+                        this.adoptPosts[i].detailUrl = "/catHTMLVue?postId="+this.adoptPosts[i].id;
+                    }
+                    
+                    this.currentPage = res.data.currentPage;
+                    this.totalPage = res.data.totalPage;
+                    this.previousPage = this.currentPage-1;
+                    if (this.previousPage <1){
+                        this.previousPage = 1;
+                    }
+                    this.nextPage = res.data.currentPage+1;
+                    if (this.nextPage >this.totalPage){
+                        this.nextPage = this.totalPage;
+                    }
+                    
+                }); 
+
+                
+            }
+        })
+    });
+
+    
+    function toTop(){
+      var topH1 = document.getElementById("mainContent")
+      document.documentElement.scrollTop=topH1.offsetTop 
+      window.pageYOffset=topH1.offsetTop 
+      document.body.scrollTop=topH1.offsetTop ;
+   }
+
+   
+    function logout(){
+      $.ajax({
+              url: "/logout",   //存取Json的網址             
+              type: "POST",
+              cache:false,
+              success: function (data) {
+                  console.log(data);
+                  location.href = "/"
+              },
+
+              error: function (xhr, ajaxOptions, thrownError) {
+                  alert(xhr.status);
+                  alert(thrownError);
+              }
+        });
+    }
+    function checkLoggedIn(){
+      $.ajax({
+              url: "/checkLoggedIn",   //存取Json的網址             
+              type: "GET",
+              cache:false,
+              success: function (data) {
+                  console.log(data)
+                  if (data.errorCode == 0){
+                      $("#usernameArea").html("Hi~~, "+ data.name);
+                      $("#loginButton").hide();
+                      $("#logoutButton").show();
+                  }
+              },
+
+              error: function (xhr, ajaxOptions, thrownError) {
+                  alert(xhr.status);
+                  alert(thrownError);
+              }
+        });
+    }
+  
+  
+  </script>
+ <body >
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="nav-link" href="/" style="color:#ff9900;font-weight:bold;">遇見百分百的喵</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/about">關於本站 </a>
+          </li>
+          <li class="nav-item active" >
+            <a class="nav-link" href="/postAdoptArticle">我要po送養文</a>
+          </li>
+          <li class="nav-item active" >
+            <a class="nav-link" href="/managePosts">管理我的送養文</a>
+          </li>
+        </ul>
+          <div id="usernameArea" style="padding-right: 20px;"></div>
+          <button class="btn btn-danger my-2 my-sm-0" id="loginButton" onclick="location.href = 'login'">註冊/登入</button>
+          <button id="logoutButton" style="display:none;" id="logoutButton" class="btn btn-danger" onclick="logout();">登出</button>
+        
+      </div>
+    </nav>
+
+    <!-- <div style="padding: 0px;margin: 0px;" class="container-fluid">
+      <img
+      class="demo-bg"
+      src="asset/img/raise_cat3.jpg"
+      alt=""
+     >
+    </div> -->
+
+
+    <div id="mainContent" class="container" >
+        <div class="row">
+        <template v-for="(adoptPost,i) in adoptPosts">
+
+            <div class="col-lg-4  col-sm-12" >
+                <div class="container-fluid" style="padding-left: 0px;padding-top: 30px;">
+                    <div class="row">
+                        <div class="col-9"><a v-bind:href="adoptPosts[i].detailUrl" style="color:#ff9900;font-weight:bold;font-size: 1.2em;">${adoptPosts[i].title}</a> </div> 
+                        <div class="col-2">
+                            <button  class="btn btn-light btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                ...
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="#">編輯</a>
+                                <a class="dropdown-item" v-on:click="doDeletePost(adoptPosts[i].id)" >刪除</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>      
+                <div class="container-fluid">
+                   <div class="row">
+                       <div class="col-5" style="padding: 0px;">
+                            <img class="images" v-bind:src="adoptPosts[i].imgSrc">
+                       </div>
+           
+                       <div class="col-7" >
+                            <div style="font-size: 0.8em;">${adoptPosts[i].city}</div>
+                            <div style="font-size: 0.8em;"><span style="font-weight:bold;">${adoptPosts[i].catName}</span>, ${adoptPosts[i].catAge} 了</div>
+                            <div class="ellipsis" style="font-size: 0.8em;">${adoptPosts[i].catStory}</div>
+                            <div style="font-size: 0.8em;position:absolute; bottom:0; right:40px;"><a v-bind:href="adoptPosts[i].detailUrl"><b>更多資訊&gt;&gt;</b></a></div>
+                        </div>
+                   </div>
+                </div>
+            </div>
+
+        </template>
+        </div>
+
+        <nav aria-label="..." style="margin-top:30px">
+            <ul class="pagination">
+               <li class="page-item">
+                    <a class="page-link" v-on:click="changePage(previousPage);">Previous</a>
+                </li>
+                <template v-for="i in totalPage">
+                    <template v-if="i != currentPage">
+                        <li class="page-item"><a class="page-link" v-on:click="changePage(i);">${i}</a></li>
+
+                    </template>
+                    <template v-else>
+                        <li class="page-item active">
+                            <span class="page-link">
+                            ${i}
+                             <span class="sr-only">(current)</span>
+                            </span>
+                        </li>
+
+                    </template>
+
+                </template>
+
+                <li class="page-item">
+                    <a class="page-link" v-on:click="changePage(nextPage);">Next</a>
+                 </li>
+               </ul>
+          </nav>
+        
+    </div>
+
+
+    <footer class="bg-light text-center text-lg-start" style="margin-top:30px">
+      <!-- Copyright -->
+      <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+        © 2021 Copyright: Tsung-Lin Wu
+      </div>
+      <!-- Copyright -->
+    </footer>
+  </body>
+</html>

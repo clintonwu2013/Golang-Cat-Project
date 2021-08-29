@@ -145,6 +145,12 @@
         if(!checkAdoptPostForm()){
           return false;
         };
+
+        var yes = confirm('確定送出嗎？');
+        if (!yes) {
+            return;
+        } 
+        
         var formData = new FormData($('#uploadForm')[0]);
         console.log(formData);
         
@@ -187,6 +193,9 @@
           </li>
           <li class="nav-item active" >
             <a class="nav-link" href="/postAdoptArticle">我要po送養文</a>
+          </li>
+          <li class="nav-item active" >
+            <a class="nav-link" href="/managePosts">管理我的送養文</a>
           </li>
         </ul>
           <div id="usernameArea" style="padding-right: 20px;"></div>
