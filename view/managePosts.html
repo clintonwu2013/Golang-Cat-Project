@@ -81,7 +81,7 @@
                         this.adoptPosts = res.data.adoptPosts;
                         console.log("this.adoptPosts=",this.adoptPosts)
                         for(let i=0; i<this.adoptPosts.length; i++){
-                            this.adoptPosts[i].imgSrc = "asset/post_img/"+this.adoptPosts[i].id+".png"
+                            //this.adoptPosts[i].imgSrc = "asset/post_img/"+this.adoptPosts[i].id+".png"
                             this.adoptPosts[i].detailUrl = "/catHTMLVue?postId="+this.adoptPosts[i].id;
                         }
                         
@@ -150,7 +150,7 @@
                     this.adoptPosts = res.data.adoptPosts;
                     console.log("this.adoptPosts=",this.adoptPosts)
                     for(let i=0; i<this.adoptPosts.length; i++){
-                        this.adoptPosts[i].imgSrc = "asset/post_img/"+this.adoptPosts[i].id+".png"
+                        //this.adoptPosts[i].imgSrc = "asset/post_img/"+this.adoptPosts[i].id+".png"
                         this.adoptPosts[i].detailUrl = "/catHTMLVue?postId="+this.adoptPosts[i].id;
                     }
                     
@@ -276,7 +276,7 @@
                             <div class="ellipsis" style="font-size: 0.8em;">${adoptPosts[i].catStory}</div>
                             <div style="font-size: 0.8em;position:absolute; bottom:0; right:40px;">
                                 <button  class="btn btn-light btn-sm" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Edit
+                                    <b>Edit</b>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                     <a class="dropdown-item" href="javascript:void(0);">編輯</a>

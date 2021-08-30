@@ -141,6 +141,22 @@
       
       return true;
     }
+    function showImg(){
+      let file = $('#catPicture').get(0).files[0];
+      if(!file){
+        console.log("no file!!!!!");
+        $("#catImg").attr("src","");
+        return;
+      }
+      var reader = new FileReader();
+      reader.onloadend = function() {
+        if(reader.result){
+          //console.log('RESULT', reader.result)
+          $("#catImg").attr("src",reader.result);
+        }
+      }
+      reader.readAsDataURL(file);
+    }
     function saveAdoptArticle(){
         if(!checkAdoptPostForm()){
           return false;
@@ -151,13 +167,37 @@
             return;
         } 
 
-        var formData = new FormData($('#uploadForm')[0]);
-        console.log(formData);
+
+        let title = $("#title").val();
+        let city = $("#city").val();
+        let area = $("#area").val();
+        let catName = $("#catName").val();
+        let catAge = $("#catAge").val();
+        let contactInfo = $("#contactInfo").val();
+        let catPersonality = $("#catPersonality").val();
+        let catStory = $("#catStory").val();
+        let catPicture = $('#catPicture').get(0).files[0];
+        let imgSrc = $("#catImg").attr("src");
+
+        data={
+          "title":title,
+          "city":city,
+          "area":area,
+          "catName":catName,
+          "catAge" :catAge,
+          "contactInfo": contactInfo,
+          "catPersonality":catPersonality,
+          "catStory":catStory,
+          "imgSrc": imgSrc
+
+        }
+        //var formData = new FormData($('#uploadForm')[0]);
+        //console.log(formData);
         
         $.ajax({
                 type: 'post', 
                 url: "/createAdoptArticle", 
-                data: formData, 
+                data: JSON.stringify(data), 
                 cache: false, 
                 processData: false, 
                 contentType: false,
@@ -251,9 +291,11 @@
 
             <div class="form-group">
                 <label for="catPicture">貓貓的照片:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
-                <input type="file" accept=".jpg,.png" class="form-control" name="catPicture"  id="catPicture">
+                <input onchange="showImg();" type="file" accept=".jpg,.png" class="form-control" name="catPicture"  id="catPicture">
             </div>
-            
+            <div class="form-group">
+              <img id="catImg" src="" width="40%" height:auto/>
+            </div>
             
             <button type="button" onclick="saveAdoptArticle();" class="btn btn-primary">送出</button>
         </form>

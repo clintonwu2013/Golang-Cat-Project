@@ -20,6 +20,7 @@ type AdoptPostModel struct {
 	Cat_personality string `json:"catPersonality"`
 	Cat_story       string `json:"catStory"`
 	Contact_info    string `json:"contactInfo"`
+	ImgSrc          string `json:"imgSrc"`
 }
 
 type CreateUserRequest struct {

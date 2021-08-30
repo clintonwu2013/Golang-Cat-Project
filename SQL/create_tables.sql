@@ -18,5 +18,6 @@ CREATE TABLE cat_adopt_posts
     cat_age character varying,
 	cat_personality character varying,
 	cat_story character varying,
-    contact_info character varying
+    contact_info character varying,
+    img_src character varying 
 );

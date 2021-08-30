@@ -146,8 +146,8 @@ func catInfoHandler(c *gin.Context) {
 	}
 
 	var catPost model.AdoptPostModel
-	row := db.QueryRow("select id,author_id, title, city, area, cat_name, cat_age,cat_personality,cat_story, contact_info from cat_adopt_posts where id =$1", postId)
-	err := row.Scan(&catPost.Id, &catPost.Author_id, &catPost.Title, &catPost.City, &catPost.Area, &catPost.Cat_name, &catPost.Cat_age, &catPost.Cat_personality, &catPost.Cat_story, &catPost.Contact_info)
+	row := db.QueryRow("select id,author_id, title, city, area, cat_name, cat_age,cat_personality,cat_story, contact_info , img_src from cat_adopt_posts where id =$1", postId)
+	err := row.Scan(&catPost.Id, &catPost.Author_id, &catPost.Title, &catPost.City, &catPost.Area, &catPost.Cat_name, &catPost.Cat_age, &catPost.Cat_personality, &catPost.Cat_story, &catPost.Contact_info, &catPost.ImgSrc)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"errorCode": -1,
@@ -187,7 +187,7 @@ func getUserPostsHandler(c *gin.Context) {
 	fmt.Println("page=", page)
 	var pageShowNum int = 12
 
-	rows, err := db.Query("SELECT id, author_id, title, city, area, cat_name, cat_age, cat_personality, cat_story FROM cat_adopt_posts where author_id=$3 order by id desc offset $1 limit $2", (page-1)*pageShowNum, pageShowNum, userID.(int))
+	rows, err := db.Query("SELECT id, author_id, title, city, area, cat_name, cat_age, cat_personality, cat_story , img_src FROM cat_adopt_posts where author_id=$3 order by id desc offset $1 limit $2", (page-1)*pageShowNum, pageShowNum, userID.(int))
 	if err != nil {
 		c.JSON(200, gin.H{
 			"errorCode": -1,
@@ -197,7 +197,7 @@ func getUserPostsHandler(c *gin.Context) {
 	var adoptPosts []model.AdoptPostModel
 	for rows.Next() {
 		var adoptPost model.AdoptPostModel
-		rows.Scan(&adoptPost.Id, &adoptPost.Author_id, &adoptPost.Title, &adoptPost.City, &adoptPost.Area, &adoptPost.Cat_name, &adoptPost.Cat_age, &adoptPost.Cat_personality, &adoptPost.Cat_story)
+		rows.Scan(&adoptPost.Id, &adoptPost.Author_id, &adoptPost.Title, &adoptPost.City, &adoptPost.Area, &adoptPost.Cat_name, &adoptPost.Cat_age, &adoptPost.Cat_personality, &adoptPost.Cat_story, &adoptPost.ImgSrc)
 		adoptPosts = append(adoptPosts, adoptPost)
 	}
 
@@ -256,9 +256,9 @@ func createAdoptArticleHandler(c *gin.Context) {
 		})
 		return
 	}
-
-	var id int
-	err := db.QueryRow(`INSERT INTO cat_adopt_posts(city, area,cat_name,cat_age,cat_personality,cat_story,title,author_id,contact_info) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9) returning id`, c.PostForm("city"), c.PostForm("area"), c.PostForm("catName"), c.PostForm("catAge"), c.PostForm("catPersonality"), c.PostForm("catStory"), c.PostForm("title"), userID.(int), c.PostForm("contactInfo")).Scan(&id)
+	var createAdoptArticleReq model.AdoptPostModel
+	err := c.ShouldBindJSON(&createAdoptArticleReq)
+	//fmt.Println("createAdoptArticleReq = ", createAdoptArticleReq.ImgSrc)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"errorCode": -1,
@@ -266,13 +266,22 @@ func createAdoptArticleHandler(c *gin.Context) {
 		})
 		return
 	}
-	file, err := c.FormFile("catPicture")
+	var id int
+	err = db.QueryRow(`INSERT INTO cat_adopt_posts(city, area,cat_name,cat_age,cat_personality,cat_story,title,author_id,contact_info,img_src) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10) returning id`, createAdoptArticleReq.City, createAdoptArticleReq.Area, createAdoptArticleReq.Cat_name, createAdoptArticleReq.Cat_age, createAdoptArticleReq.Cat_personality, createAdoptArticleReq.Cat_story, createAdoptArticleReq.Title, userID.(int), createAdoptArticleReq.Contact_info, createAdoptArticleReq.ImgSrc).Scan(&id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err,
+		c.JSON(200, gin.H{
+			"errorCode": -1,
+			"message":   err.Error(),
 		})
+		return
 	}
-	c.SaveUploadedFile(file, "asset/post_img/"+strconv.Itoa(int(id))+".png")
+	// file, err := c.FormFile("catPicture")
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{
+	// 		"error": err,
+	// 	})
+	// }
+	//c.SaveUploadedFile(file, "asset/post_img/"+strconv.Itoa(int(id))+".png")
 
 	c.JSON(200, gin.H{
 		"errorCode": 0,
@@ -293,7 +302,7 @@ func allAdoptArticlesHandler(c *gin.Context) {
 	fmt.Println("page=", page)
 	var pageShowNum int = 12
 
-	rows, err := db.Query("SELECT id, author_id, title, city, area, cat_name, cat_age, cat_personality, cat_story FROM cat_adopt_posts order by id desc offset $1 limit $2", (page-1)*pageShowNum, pageShowNum)
+	rows, err := db.Query("SELECT id, author_id, title, city, area, cat_name, cat_age, cat_personality, cat_story, img_src FROM cat_adopt_posts order by id desc offset $1 limit $2", (page-1)*pageShowNum, pageShowNum)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"errorCode": -1,
@@ -303,7 +312,7 @@ func allAdoptArticlesHandler(c *gin.Context) {
 	var adoptPosts []model.AdoptPostModel
 	for rows.Next() {
 		var adoptPost model.AdoptPostModel
-		rows.Scan(&adoptPost.Id, &adoptPost.Author_id, &adoptPost.Title, &adoptPost.City, &adoptPost.Area, &adoptPost.Cat_name, &adoptPost.Cat_age, &adoptPost.Cat_personality, &adoptPost.Cat_story)
+		rows.Scan(&adoptPost.Id, &adoptPost.Author_id, &adoptPost.Title, &adoptPost.City, &adoptPost.Area, &adoptPost.Cat_name, &adoptPost.Cat_age, &adoptPost.Cat_personality, &adoptPost.Cat_story, &adoptPost.ImgSrc)
 		adoptPosts = append(adoptPosts, adoptPost)
 	}
 

@@ -74,7 +74,7 @@
                 .then( (res) => {
                     this.catPost = res.data.catPost;
                     console.log("this.catPost=",this.catPost)
-                    this.catPost.imgSrc = "asset/post_img/"+res.data.catPost.id+".png";
+                    //this.catPost.imgSrc = "asset/post_img/"+res.data.catPost.id+".png";
 
                     this.catPost.catStory = res.data.catPost.catStory.replace(/\r\n|\n/g,"<br>");
                     this.catPost.catPersonality = res.data.catPost.catPersonality.replace(/\r\n|\n/g,"<br>");
