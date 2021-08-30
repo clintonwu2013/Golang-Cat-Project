@@ -109,6 +109,8 @@ func main() {
 	r.GET("/checkLoggedIn", checkLoggedInHandler)
 
 	r.DELETE("/deleteAdoptPost", deleteAdoptPostHandler)
+
+	r.PUT("/updateAdoptPost", updateAdoptPostHandler)
 	r.Run() // listen and serve (for windows "http://localhost:8080")
 }
 
@@ -187,7 +189,7 @@ func getUserPostsHandler(c *gin.Context) {
 	fmt.Println("page=", page)
 	var pageShowNum int = 12
 
-	rows, err := db.Query("SELECT id, author_id, title, city, area, cat_name, cat_age, cat_personality, cat_story , img_src FROM cat_adopt_posts where author_id=$3 order by id desc offset $1 limit $2", (page-1)*pageShowNum, pageShowNum, userID.(int))
+	rows, err := db.Query("SELECT id, author_id, title, city, area, cat_name, cat_age, cat_personality, cat_story , img_src , contact_info FROM cat_adopt_posts where author_id=$3 order by id desc offset $1 limit $2", (page-1)*pageShowNum, pageShowNum, userID.(int))
 	if err != nil {
 		c.JSON(200, gin.H{
 			"errorCode": -1,
@@ -197,7 +199,7 @@ func getUserPostsHandler(c *gin.Context) {
 	var adoptPosts []model.AdoptPostModel
 	for rows.Next() {
 		var adoptPost model.AdoptPostModel
-		rows.Scan(&adoptPost.Id, &adoptPost.Author_id, &adoptPost.Title, &adoptPost.City, &adoptPost.Area, &adoptPost.Cat_name, &adoptPost.Cat_age, &adoptPost.Cat_personality, &adoptPost.Cat_story, &adoptPost.ImgSrc)
+		rows.Scan(&adoptPost.Id, &adoptPost.Author_id, &adoptPost.Title, &adoptPost.City, &adoptPost.Area, &adoptPost.Cat_name, &adoptPost.Cat_age, &adoptPost.Cat_personality, &adoptPost.Cat_story, &adoptPost.ImgSrc, &adoptPost.Contact_info)
 		adoptPosts = append(adoptPosts, adoptPost)
 	}
 
@@ -220,6 +222,34 @@ func getUserPostsHandler(c *gin.Context) {
 		"adoptPosts":  adoptPosts,
 		"currentPage": page,
 		"totalPage":   int(math.Ceil(totalPage)),
+	})
+}
+
+func updateAdoptPostHandler(c *gin.Context) {
+	var updateAdoptPostReq model.AdoptPostModel
+	err := c.ShouldBindJSON(&updateAdoptPostReq)
+	if err != nil {
+		c.JSON(200, gin.H{
+			"errorCode": -1,
+			"message":   err.Error(),
+		})
+		return
+	}
+	//fmt.Println("updateAdoptPostReq=", updateAdoptPostReq.ImgSrc)
+
+	_, err = db.Exec("update cat_adopt_posts set title=$1, city=$2, area=$3, cat_name=$4, cat_age=$5, cat_personality=$6, cat_story=$7, contact_info=$8, img_src=$9 where id=$10", updateAdoptPostReq.Title, updateAdoptPostReq.City, updateAdoptPostReq.Area, updateAdoptPostReq.Cat_name, updateAdoptPostReq.Cat_age, updateAdoptPostReq.Cat_personality, updateAdoptPostReq.Cat_story, updateAdoptPostReq.Contact_info, updateAdoptPostReq.ImgSrc, updateAdoptPostReq.Id)
+
+	if err != nil {
+		c.JSON(200, gin.H{
+			"errorCode": -1,
+			"message":   err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"errorCode": 0,
+		"message":   "update adopt article success",
 	})
 }
 func deleteAdoptPostHandler(c *gin.Context) {

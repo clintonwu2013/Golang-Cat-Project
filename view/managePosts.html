@@ -62,6 +62,59 @@
       
       checkLoggedIn();
       //getAllAdoptArticles(1,true);
+      function checkAdoptPostForm(){
+          let title = $("#title").val();
+          let city = $("#city").val();
+          let area = $("#area").val();
+          let catName = $("#catName").val();
+          let catAge = $("#catAge").val();
+          let contactInfo = $("#contactInfo").val();
+          let catPersonality = $("#catPersonality").val();
+          let catStory = $("#catStory").val();
+          let catPicture = $("#catImg").attr("src");
+          console.info(catPicture);
+          if (!title){
+            alert("標題不可空白!");
+            return false;
+          }
+
+          if (!city){
+            alert("所在縣市不可空白!");
+            return false;
+          }
+
+          if (!area){
+            alert("所在 區 / 市 / 鎮 / 鄉 (行政區)不可空白!");
+            return false;
+          }
+
+          if (!catName){
+            alert("貓貓名子不可空白!");
+            return false;
+          }
+          if (!catAge){
+            alert("貓貓的出生日（年齡）不可空白!");
+            return false;
+          }
+          if (!contactInfo){
+            alert("電話/聯絡方式不可空白!");
+            return false;
+          }
+          if (!catPersonality){
+            alert("貓貓個性略述不可空白!");
+            return false;
+          }
+          if (!catStory){
+            alert("貓貓的故事 / 詳細認養條件描述不可空白!");
+            return false;
+          }
+          if(!catPicture){
+            alert("請上傳貓貓的照片!");
+            return false;
+          }
+          
+          return true;
+    }
 
       var mainContent = new Vue({
             delimiters: ['${', '}'],
@@ -71,9 +124,83 @@
                 currentPage: '',
                 totalPage: '',
                 previousPage: '',
-                nextPage:''
+                nextPage:'',
+                postModal:''
             },
             methods:{
+              doUpdatePost(){
+                  if(!checkAdoptPostForm()){
+                    return;
+                  }
+                  //alert("doUpdatePost()");
+                  console.log(this.postModal);
+                  axios({
+                        method: 'PUT',
+                        url: '/updateAdoptPost',
+                        'Content-Type': 'application/json',
+                        data: {
+                          title: this.postModal.title,
+                          area: this.postModal.area,
+                          authorId: this.postModal.authorId,
+                          catAge: this.postModal.catAge,
+                          catName: this.postModal.catName,
+                          catPersonality: this.postModal.catPersonality,
+                          catStory: this.postModal.catStory,
+                          city: this.postModal.city,
+                          contactInfo: this.postModal.contactInfo,
+                          id: this.postModal.id,
+                          imgSrc: $("#catImg").attr("src") // v-bind is one way bind, change the value in element do not change data value
+                        }
+                     }).then( (res) => {
+                        console.log(res);
+                        if(res.data.errorCode !=0){
+                          alert("編輯送養文失敗,原因:"+res.data.message);
+                          return;
+                        }
+                        alert("更新成功!");
+                        //location.href="/managePosts";
+
+                        for(let i=0; i<this.adoptPosts.length;i++){
+                            if(this.adoptPosts[i].id == this.postModal.id){
+                                this.adoptPosts[i].title = this.postModal.title
+                                this.adoptPosts[i].area = this.postModal.area
+                                this.adoptPosts[i].authorId = this.postModal.authorId
+                                this.adoptPosts[i].catName = this.postModal.catName
+                                this.adoptPosts[i].catPersonality = this.postModal.catPersonality
+                                this.adoptPosts[i].catStory = this.postModal.catStory
+                                this.adoptPosts[i].city = this.postModal.city
+                                this.adoptPosts[i].contactInfo = this.postModal.contactInfo
+                                this.adoptPosts[i].imgSrc = $("#catImg").attr("src");
+                                //this.adoptPosts[i].id = this.postModal.id
+                                $("#postEditModal").modal("hide");
+                                return
+                            }
+                          }
+                     })
+              },
+                callModal(postId){
+                  //alert(postId);
+                  for(let i=0; i<this.adoptPosts.length;i++){
+                    if(this.adoptPosts[i].id == postId){
+                      this.postModal={
+                        title: this.adoptPosts[i].title,
+                        area: this.adoptPosts[i].area,
+                        authorId: this.adoptPosts[i].authorId,
+                        catAge: this.adoptPosts[i].catAge,
+                        catName: this.adoptPosts[i].catName,
+                        catPersonality: this.adoptPosts[i].catPersonality,
+                        catStory:this.adoptPosts[i].catStory,
+                        city:this.adoptPosts[i].city,
+                        contactInfo:this.adoptPosts[i].contactInfo,
+                        id:this.adoptPosts[i].id,
+                        imgSrc:this.adoptPosts[i].imgSrc
+
+                      }
+                      console.log("postModal=",this.postModal);
+                      return;
+                    }
+                  }
+                },
                 changePage(page){
                     axios.get("/getUserPosts?page="+page)
                     .then( (res) => {
@@ -171,7 +298,23 @@
             }
         })
     });
-
+    
+    function showImg(){
+      let file = $('#catPicture').get(0).files[0];
+      if(!file){
+        console.log("no file!!!!!");
+        $("#catImg").attr("src","");
+        return;
+      }
+      var reader = new FileReader();
+      reader.onloadend = function() {
+        if(reader.result){
+          //console.log('RESULT', reader.result)
+          $("#catImg").attr("src",reader.result);
+        }
+      }
+      reader.readAsDataURL(file);
+    }
     
     function toTop(){
       var topH1 = document.getElementById("mainContent")
@@ -279,7 +422,7 @@
                                     <b>Edit</b>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="javascript:void(0);">編輯</a>
+                                    <a class="dropdown-item" href="javascript:void(0);" onclick="$('#postEditModal').modal();" v-on:click="callModal(adoptPosts[i].id)">編輯</a>
                                     <a class="dropdown-item" href="javascript:void(0);" v-on:click="doDeletePost(adoptPosts[i].id)" >刪除</a>
                                 </div>
                                 <a v-bind:href="adoptPosts[i].detailUrl"><b>檢視貼文&gt;&gt;</b></a>
@@ -319,6 +462,82 @@
                  </li>
                </ul>
           </nav>
+
+
+          
+
+    <!-- Modal -->
+    <div  class="modal fade bd-example-modal-lg" id="postEditModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle"><b>編輯送養文</b></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+                <form id="uploadForm" enctype="multipart/form-data">
+                  
+                    <div class="form-group">
+                        <label for="title">標題:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
+                        <input v-model="postModal.title" type="text" class="form-control" name="title" id="title" placeholder="標題">
+                    </div>
+        
+                    <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="city">所在縣市:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
+                        <input v-model="postModal.city" type="text" class="form-control" name="city" id="city" placeholder="所在縣市">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="area">所在 區 / 市 / 鎮 / 鄉 (行政區): <p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
+                        <input v-model="postModal.area" type="text" class="form-control" name="area" id="area" placeholder="所在 區 / 市 / 鎮 / 鄉 (行政區):">
+                    </div>
+                    </div>
+                    <div class="form-group">
+                    <label for="catName">貓貓名子:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
+                    <input v-model="postModal.catName" type="text" class="form-control" name="catName" id="catName" placeholder="貓貓名子">
+                    </div>
+                    <div class="form-group">
+                    <label for="catAge">貓貓的出生日（年齡）:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
+                    <input v-model="postModal.catAge" type="text" class="form-control" name="catAge" id="catAge" placeholder="貓貓的出生日（年齡）">
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="contactInfo">電話/聯絡方式:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
+                      <textarea v-model="postModal.contactInfo" type="textarea" type="text" class="form-control" name="contactInfo" id="contactInfo" rows="3" cols="50"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="catPersonality">貓貓個性略述:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
+                      <textarea v-model="postModal.catPersonality" type="textarea" class="form-control" name="catPersonality" id="catPersonality" rows="5" cols="50"></textarea>
+                    </div>
+        
+                    <div class="form-group" >
+                        <label for="catStory">貓貓的故事 / 詳細認養條件描述:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p> </label>
+                        <textarea v-model="postModal.catStory" type="textarea" class="form-control" name="catStory" id="catStory" rows="5" cols="50"></textarea>
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="catPicture">貓貓的照片:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
+                        <input  onchange="showImg();" type="file" accept=".jpg,.png" class="form-control" name="catPicture"  id="catPicture">
+                    </div>
+                    <div class="form-group">
+                      <img id="catImg" v-bind:src="postModal.imgSrc" width="40%" height:auto/>
+                    </div>
+              
+                </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" v-on:click="doUpdatePost();">儲存</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal end-->
+
+
         
     </div>
 
