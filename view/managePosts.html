@@ -56,6 +56,27 @@
       -webkit-box-orient: vertical;
       white-space: normal;
     }
+
+    .loader {
+        border: 16px solid #D4D4D4;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 120px;
+        height: 120px;
+        background-color: transparent;
+        position:fixed;
+        top:50%;
+        left:50%; 
+        margin-left:-70px;
+        margin-top:-120px;
+        z-index: 999999999;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+      }
+      @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+      }
   </style>
   <script>
     $(function(){
@@ -132,6 +153,7 @@
                   if(!checkAdoptPostForm()){
                     return;
                   }
+                  $("#loading").show();
                   //alert("doUpdatePost()");
                   //console.log(this.postModal);
                   var formData = new FormData($('#uploadForm')[0]);
@@ -143,8 +165,10 @@
                         //console.log(res);
                         if(res.data.errorCode !=0){
                           alert("編輯送養文失敗,原因:"+res.data.message);
+                          $("#loading").hide();
                           return;
                         }
+                        $("#loading").hide();
                         alert("更新成功!");
                         //location.href="/managePosts";
 
@@ -224,6 +248,7 @@
                     if (!yes) {
                         return;
                     } 
+                    $("#loading").show();
                     //alert("do delete post="+postId);
                     axios({
                         method: 'DELETE',
@@ -237,9 +262,12 @@
                         //console.log("result.data=",result.data)
                         if(result.data.errorCode != 0){
                             alert("刪除失敗,原因:"+result.data.message);
+                            $("#loading").hide();
                             return;
                         }
-                        alert("刪除成功!")
+                        $("#loading").hide();
+                        alert("刪除成功!");
+
                         //console.log("result.data.deletedPostId=",result.data.deletedPostId);
                         deletedPostId = result.data.deletedPostId;
                         for(let i=0;i<this.adoptPosts.length;i++){
@@ -389,6 +417,7 @@
 
 
     <div id="mainContent" class="container" >
+      <div id="loading" class="loader" ng-hide="data.length > 0" style="display: none;"></div>
         <div class="row">
         <template v-for="(adoptPost,i) in adoptPosts">
 

@@ -39,6 +39,26 @@
       font-size: 2em;
 
     }
+    .loader {
+        border: 16px solid #D4D4D4;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 120px;
+        height: 120px;
+        background-color: transparent;
+        position:fixed;
+        top:50%;
+        left:50%; 
+        margin-left:-70px;
+        margin-top:-120px;
+        z-index: 999999999;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+      }
+      @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+      }
   </style>
   <script>
     $(function(){
@@ -161,12 +181,12 @@
         if(!checkAdoptPostForm()){
           return false;
         };
-
         var yes = confirm('確定送出嗎？');
         if (!yes) {
             return;
         } 
-
+        
+        $("#loading").show();
 
         let title = $("#title").val();
         let city = $("#city").val();
@@ -204,10 +224,12 @@
               success: function (data) {
                   //console.log(data);
                   if(data.errorCode == 0){
+                      $("#loading").hide();
                       alert("送養文儲存成功!");
                       location.href="/";
                   }else{
                       alert("送養文儲存失敗,原因:"+data.message);
+                      $("#loading").hide();
                   }
               },
 
@@ -247,6 +269,7 @@
 
     
     <div class="container" style="padding-top:20px">
+      <div id="loading" class="loader" ng-hide="data.length > 0" style="display: none;"></div>
         <h2><b>貓貓送養文</b></h2>
         <form id="uploadForm" enctype="multipart/form-data">
             

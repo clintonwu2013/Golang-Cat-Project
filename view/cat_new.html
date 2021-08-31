@@ -54,6 +54,28 @@
       -webkit-box-orient: vertical;
       white-space: normal;
     }
+
+    .loader {
+        border: 16px solid #D4D4D4;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 120px;
+        background-color: transparent;
+        height: 120px;
+          position: fixed;
+          top:100px;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          margin: auto;
+          z-index: 99999999;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+      }
+      @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+      }
   </style>
   <script>
     $(function(){
@@ -210,6 +232,7 @@
   
   </script>
  <body >
+  <div class="loader" ng-hide="data.length > 0" style="display: none;"></div>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <a class="nav-link" href="/" style="color:#ff9900;font-weight:bold;">遇見百分百的喵</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
