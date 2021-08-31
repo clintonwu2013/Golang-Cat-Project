@@ -57,6 +57,27 @@
         -webkit-box-orient: vertical;
         white-space: normal;
     }
+
+    .loader {
+        border: 16px solid #D4D4D4;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 120px;
+        height: 120px;
+        background-color: transparent;
+        position:fixed;
+        top:50%;
+        left:50%; 
+        margin-left:-70px;
+        margin-top:-120px;
+        z-index: 999999999;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+      }
+      @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+      }
 </style>
 <script>
     $(function(){
@@ -70,10 +91,11 @@
                 authorName: ''
             },
             mounted(){
+                $("#loading").show();
                 axios.get('/catInfo')
                 .then( (res) => {
                     this.catPost = res.data.catPost;
-                    //console.log("this.catPost=",this.catPost)
+                   // console.log("this.catPost=",this.catPost)
                     this.catPost.imgSrc = "/getCatImg?postId="+res.data.catPost.id;
                     
                     this.catPost.catStory = res.data.catPost.catStory.replace(/\r\n|\n/g,"<br>");
@@ -81,6 +103,7 @@
                     this.catPost.contactInfo = res.data.catPost.contactInfo.replace(/\r\n|\n/g,"<br>");
                     
                     this.authorName = res.data.authorName;
+                    $("#loading").hide();
                 }); 
             }
         })
@@ -152,7 +175,7 @@
 </nav>
 
 <div id="mainContent" class="container" style="background-color: #FFFCEC; padding-top: 20px;padding-bottom: 20px;">
-
+    <div id="loading" class="loader" ng-hide="data.length > 0" style="display: none;"></div>
     <h2><b>${catPost.title}</b></h2>
     <div class="row">
         <div class="col-lg-8 col-md-12">

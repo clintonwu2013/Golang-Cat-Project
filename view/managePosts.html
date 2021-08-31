@@ -284,6 +284,7 @@
 
             },
             mounted(){
+                $("#loading").show();
                 axios.get("/getUserPosts?page=1")
                 .then( (res) => {
                     console.log("######## res=",res)
@@ -310,6 +311,7 @@
                     if (this.nextPage >this.totalPage){
                         this.nextPage = this.totalPage;
                     }
+                    $("#loading").hide();
                     
                 }); 
 
