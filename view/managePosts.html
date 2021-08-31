@@ -287,11 +287,16 @@
                 $("#loading").show();
                 axios.get("/getUserPosts?page=1")
                 .then( (res) => {
-                    console.log("######## res=",res)
+                    //console.log("######## res=",res)
                     if(res.data.errorCode != 0){
                         alert(res.data.message);
                         location.href="/login";
                         return;
+                    }
+                    if(!res.data.adoptPosts){
+                      $("#loading").hide();
+                      alert("您還沒有任何貼文~");
+                      return;
                     }
                     //console.log("res.adoptPosts=",res.data.adoptPosts);
                     this.adoptPosts = res.data.adoptPosts;
