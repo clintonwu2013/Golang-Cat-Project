@@ -92,7 +92,7 @@
    }
 
     function displayPaging(data){
-      console.log(data);
+      //console.log(data);
       var currentPage = data.currentPage;
       var totalPage = data.totalPage;
       var previousPage = currentPage-1;
@@ -146,7 +146,7 @@
                        `<div class="container-fluid">`+
                           `<div class="row">`+
                               `<div class="col-5" style="padding: 0px;">`+
-                                   `<img class="images" src="${adoptPosts[i].imgSrc}">`+
+                                   `<img class="images" src="/getCatImg?postId=${adoptPosts[i].id}">`+
                               `</div>`+
                   
                               `<div class="col-7" >`+
@@ -176,7 +176,7 @@
               type: "POST",
               cache:false,
               success: function (data) {
-                  console.log(data);
+                  //console.log(data);
                   location.href = "/"
               },
 
@@ -192,7 +192,7 @@
               type: "GET",
               cache:false,
               success: function (data) {
-                  console.log(data)
+                  //console.log(data)
                   if (data.errorCode == 0){
                       $("#usernameArea").html("Hi~~, "+ data.name);
                       $("#loginButton").hide();

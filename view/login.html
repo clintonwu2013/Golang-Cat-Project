@@ -78,7 +78,7 @@
 <script>
     function verifyUser(){
        var dataObj =  {"username":$("#name").val(), "password":$("#password").val()};
-       console.log("dataObj=",dataObj);
+       //console.log("dataObj=",dataObj);
        $.ajax({
                 url: "verifyUser",   //存取Json的網址             
                 type: "POST",
@@ -87,7 +87,7 @@
                 data:JSON.stringify(dataObj),
                 contentType: "application/json",
                 success: function (data) {
-                    console.log(data)
+                    //console.log(data)
                     if (data.errorCode == 0){
                         location.href = "/"
                     }else{

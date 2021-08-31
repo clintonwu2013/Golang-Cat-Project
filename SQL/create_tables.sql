@@ -19,5 +19,5 @@ CREATE TABLE cat_adopt_posts
 	cat_personality character varying,
 	cat_story character varying,
     contact_info character varying,
-    img_src character varying 
+    img_src bytea
 );

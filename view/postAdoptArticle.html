@@ -52,7 +52,7 @@
               type: "POST",
               cache:false,
               success: function (data) {
-                  console.log(data)
+                  //console.log(data)
                   location.href = "/"
               },
 
@@ -68,7 +68,7 @@
               type: "GET",
               cache:false,
               success: function (data) {
-                  console.log(data)
+                  //console.log(data)
                   if (data.errorCode == 0){
                       $("#usernameArea").html("Hi~~, "+ data.name);
                       $("#loginButton").hide();
@@ -144,7 +144,7 @@
     function showImg(){
       let file = $('#catPicture').get(0).files[0];
       if(!file){
-        console.log("no file!!!!!");
+        //console.log("no file!!!!!");
         $("#catImg").attr("src","");
         return;
       }
@@ -191,18 +191,18 @@
           "imgSrc": imgSrc
 
         }
-        //var formData = new FormData($('#uploadForm')[0]);
+        var formData = new FormData($('#uploadForm')[0]);
         //console.log(formData);
         
         $.ajax({
                 type: 'post', 
                 url: "/createAdoptArticle", 
-                data: JSON.stringify(data), 
+                data: formData, 
                 cache: false, 
                 processData: false, 
                 contentType: false,
               success: function (data) {
-                  console.log(data);
+                  //console.log(data);
                   if(data.errorCode == 0){
                       alert("送養文儲存成功!");
                       location.href="/";

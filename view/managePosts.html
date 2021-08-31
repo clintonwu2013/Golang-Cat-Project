@@ -72,7 +72,7 @@
           let catPersonality = $("#catPersonality").val();
           let catStory = $("#catStory").val();
           let catPicture = $("#catImg").attr("src");
-          console.info(catPicture);
+         // console.info(catPicture);
           if (!title){
             alert("標題不可空白!");
             return false;
@@ -133,26 +133,14 @@
                     return;
                   }
                   //alert("doUpdatePost()");
-                  console.log(this.postModal);
+                  //console.log(this.postModal);
+                  var formData = new FormData($('#uploadForm')[0]);
                   axios({
                         method: 'PUT',
                         url: '/updateAdoptPost',
-                        'Content-Type': 'application/json',
-                        data: {
-                          title: this.postModal.title,
-                          area: this.postModal.area,
-                          authorId: this.postModal.authorId,
-                          catAge: this.postModal.catAge,
-                          catName: this.postModal.catName,
-                          catPersonality: this.postModal.catPersonality,
-                          catStory: this.postModal.catStory,
-                          city: this.postModal.city,
-                          contactInfo: this.postModal.contactInfo,
-                          id: this.postModal.id,
-                          imgSrc: $("#catImg").attr("src") // v-bind is one way bind, change the value in element do not change data value
-                        }
+                        data: formData
                      }).then( (res) => {
-                        console.log(res);
+                        //console.log(res);
                         if(res.data.errorCode !=0){
                           alert("編輯送養文失敗,原因:"+res.data.message);
                           return;
@@ -170,8 +158,10 @@
                                 this.adoptPosts[i].catStory = this.postModal.catStory
                                 this.adoptPosts[i].city = this.postModal.city
                                 this.adoptPosts[i].contactInfo = this.postModal.contactInfo
-                                this.adoptPosts[i].imgSrc = $("#catImg").attr("src");
+                                //this.adoptPosts[i].imgSrc = this.postModal.imgSrc;
+                                this.adoptPosts[i].imgSrc = $("#catImg").attr('src');
                                 //this.adoptPosts[i].id = this.postModal.id
+                                $("#catPicture").val(null);
                                 $("#postEditModal").modal("hide");
                                 return
                             }
@@ -179,6 +169,7 @@
                      })
               },
                 callModal(postId){
+                  $("#catPicture").val(null);
                   //alert(postId);
                   for(let i=0; i<this.adoptPosts.length;i++){
                     if(this.adoptPosts[i].id == postId){
@@ -192,11 +183,11 @@
                         catStory:this.adoptPosts[i].catStory,
                         city:this.adoptPosts[i].city,
                         contactInfo:this.adoptPosts[i].contactInfo,
-                        id:this.adoptPosts[i].id,
-                        imgSrc:this.adoptPosts[i].imgSrc
+                        id:this.adoptPosts[i].id
 
                       }
-                      console.log("postModal=",this.postModal);
+                      $("#catImg").attr("src",`/getCatImg?postId=${this.adoptPosts[i].id}`)
+                      //console.log("postModal=",this.postModal);
                       return;
                     }
                   }
@@ -204,11 +195,11 @@
                 changePage(page){
                     axios.get("/getUserPosts?page="+page)
                     .then( (res) => {
-                        console.log("res.adoptPosts=",res.data.adoptPosts);
+                        //console.log("res.adoptPosts=",res.data.adoptPosts);
                         this.adoptPosts = res.data.adoptPosts;
-                        console.log("this.adoptPosts=",this.adoptPosts)
+                        //console.log("this.adoptPosts=",this.adoptPosts)
                         for(let i=0; i<this.adoptPosts.length; i++){
-                            //this.adoptPosts[i].imgSrc = "asset/post_img/"+this.adoptPosts[i].id+".png"
+                            this.adoptPosts[i].imgSrc = "/getCatImg?postId="+this.adoptPosts[i].id;
                             this.adoptPosts[i].detailUrl = "/catHTMLVue?postId="+this.adoptPosts[i].id;
                         }
                         
@@ -243,17 +234,17 @@
                         }
                     })
                     .then((result) => { 
-                        console.log("result.data=",result.data)
+                        //console.log("result.data=",result.data)
                         if(result.data.errorCode != 0){
                             alert("刪除失敗,原因:"+result.data.message);
                             return;
                         }
                         alert("刪除成功!")
-                        console.log("result.data.deletedPostId=",result.data.deletedPostId);
+                        //console.log("result.data.deletedPostId=",result.data.deletedPostId);
                         deletedPostId = result.data.deletedPostId;
                         for(let i=0;i<this.adoptPosts.length;i++){
-                            console.log("this.adoptPosts[i].id=",this.adoptPosts[i].id);
-                            console.log("deletedPostId=",deletedPostId)
+                            //console.log("this.adoptPosts[i].id=",this.adoptPosts[i].id);
+                            //console.log("deletedPostId=",deletedPostId)
                             if(this.adoptPosts[i].id == deletedPostId){
                                 this.adoptPosts.splice(i,1);
                                 return;
@@ -273,11 +264,11 @@
                         location.href="/login";
                         return;
                     }
-                    console.log("res.adoptPosts=",res.data.adoptPosts);
+                    //console.log("res.adoptPosts=",res.data.adoptPosts);
                     this.adoptPosts = res.data.adoptPosts;
-                    console.log("this.adoptPosts=",this.adoptPosts)
+                    //console.log("this.adoptPosts=",this.adoptPosts)
                     for(let i=0; i<this.adoptPosts.length; i++){
-                        //this.adoptPosts[i].imgSrc = "asset/post_img/"+this.adoptPosts[i].id+".png"
+                        this.adoptPosts[i].imgSrc = "/getCatImg?postId="+this.adoptPosts[i].id;
                         this.adoptPosts[i].detailUrl = "/catHTMLVue?postId="+this.adoptPosts[i].id;
                     }
                     
@@ -302,7 +293,7 @@
     function showImg(){
       let file = $('#catPicture').get(0).files[0];
       if(!file){
-        console.log("no file!!!!!");
+        //console.log("no file!!!!!");
         $("#catImg").attr("src","");
         return;
       }
@@ -330,7 +321,7 @@
               type: "POST",
               cache:false,
               success: function (data) {
-                  console.log(data);
+                  //console.log(data);
                   location.href = "/"
               },
 
@@ -346,7 +337,7 @@
               type: "GET",
               cache:false,
               success: function (data) {
-                  console.log(data)
+                  //console.log(data)
                   if (data.errorCode == 0){
                       $("#usernameArea").html("Hi~~, "+ data.name);
                       $("#loginButton").hide();
@@ -478,7 +469,7 @@
           </div>
           <div class="modal-body">
                 <form id="uploadForm" enctype="multipart/form-data">
-                  
+                  <input v-model="postModal.id" type="hidden" class="form-control" name="postId" id="postId" placeholder="postId">
                     <div class="form-group">
                         <label for="title">標題:<p style="color:red;display: inline-block;margin-bottom: 0;">*</p></label>
                         <input v-model="postModal.title" type="text" class="form-control" name="title" id="title" placeholder="標題">
@@ -523,7 +514,7 @@
                         <input  onchange="showImg();" type="file" accept=".jpg,.png" class="form-control" name="catPicture"  id="catPicture">
                     </div>
                     <div class="form-group">
-                      <img id="catImg" v-bind:src="postModal.imgSrc" width="40%" height:auto/>
+                      <img id="catImg" src="" width="40%" height:auto/>
                     </div>
               
                 </form>

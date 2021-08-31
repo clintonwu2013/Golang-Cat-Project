@@ -73,9 +73,9 @@
                 axios.get('/catInfo')
                 .then( (res) => {
                     this.catPost = res.data.catPost;
-                    console.log("this.catPost=",this.catPost)
-                    //this.catPost.imgSrc = "asset/post_img/"+res.data.catPost.id+".png";
-
+                    //console.log("this.catPost=",this.catPost)
+                    this.catPost.imgSrc = "/getCatImg?postId="+res.data.catPost.id;
+                    
                     this.catPost.catStory = res.data.catPost.catStory.replace(/\r\n|\n/g,"<br>");
                     this.catPost.catPersonality = res.data.catPost.catPersonality.replace(/\r\n|\n/g,"<br>");
                     this.catPost.contactInfo = res.data.catPost.contactInfo.replace(/\r\n|\n/g,"<br>");
@@ -93,7 +93,7 @@
             type: "POST",
             cache:false,
             success: function (data) {
-                console.log(data);
+                //console.log(data);
                 location.href = "/";
             },
 
@@ -109,7 +109,7 @@
             type: "GET",
             cache:false,
             success: function (data) {
-                console.log(data)
+                //console.log(data)
                 if (data.errorCode == 0){
                     $("#usernameArea").html("Hi~~, "+ data.name);
                     $("#loginButton").hide();
