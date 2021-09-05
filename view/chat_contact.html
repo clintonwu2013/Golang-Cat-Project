@@ -79,7 +79,17 @@
           100% { transform: rotate(360deg); }
       }
 
-      .dialog{
+      .right-dialog{
+          background-color: #A6FFA6;
+          border-radius: 15px;
+          word-break: break-all; 
+          word-wrap: break-word; 
+          padding:20px;
+          margin:10px;
+          margin-top:0px;
+      }
+
+      .left-dialog{
           background-color: #F0F0F0;
           border-radius: 15px;
           word-break: break-all; 
@@ -109,6 +119,7 @@
        var windowWidth = $(window).width();
        //alert(windowWidth);
        if (windowWidth >= 992){
+        $("#chatModal").modal('hide');
         //alert("doShowOnRight");
        }else{
         //alert("doModal");
@@ -195,6 +206,7 @@
 <div id="mainContent" class="container-fluid" style=" padding-top: 20px;padding-bottom: 20px;">
     <div class="row">
         <div class="col-lg-3" style="height: 580px; overflow: auto;">
+            <h2><b>收件夾</b></h2>
             <div class="list-group">
                 <a href="javascript:void(0)" onclick="showChatDetail();" class="list-group-item list-group-item-action flex-column align-items-start active">
                     <div class="container-fluid">
@@ -236,10 +248,10 @@
         <div class="col-lg-9" id="chatDetail">
             <div class="container-fluid" style="height: 400px; overflow: auto;">
                 <div class="row">
-                    <div class="col-lg-1">
+                    <div class="col-lg-1" style="padding:0px;text-align: right;">
                        name :
                     </div>
-                    <div class="col-lg-5 dialog">
+                    <div class="col-lg-5 left-dialog">
                         A: AAAA
                     </div>
                     <div class="col-lg-5">
@@ -248,22 +260,22 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-5">
+                    <div class="col-lg-5" >
                     </div>
-                    <div class="col-lg-1">
-                        name2 :
+                    <div class="col-lg-1" style="padding:0px;text-align: right;">
+                        風柏維無吳:
                     </div>
-                    <div class="col-lg-5 dialog">
+                    <div class="col-lg-5 right-dialog">
                        B:BBBBAAAAAAAAA
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-5">
                     </div>
-                    <div class="col-lg-1">
+                    <div class="col-lg-1 col-md-12" style="padding:0px;text-align: right;">
                         name2 :
                     </div>
-                    <div class="col-lg-5 dialog">
+                    <div class="col-lg-5 right-dialog">
                        B:BBBBAAAAAAAAA
                     </div>
                 </div>
@@ -302,7 +314,7 @@
                         <div class="col-lg-1">
                            name :
                         </div>
-                        <div class="col-lg-5 dialog">
+                        <div class="col-lg-5 left-dialog">
                             A: AAAA
                         </div>
                         <div class="col-lg-5">
@@ -316,123 +328,26 @@
                         <div class="col-lg-1">
                             name2 :
                         </div>
-                        <div class="col-lg-5 dialog">
+                        <div class="col-lg-5 right-dialog">
                            B:BBBBAAAAAAAAA
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-5">
-                        </div>
-                        <div class="col-lg-1">
-                            name2 :
-                        </div>
-                        <div class="col-lg-5 dialog">
-                           B:BBBBAAAAAAAAA
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-5">
-                        </div>
-                        <div class="col-lg-1">
-                            name2 :
-                        </div>
-                        <div class="col-lg-5 dialog">
-                           B:BBBBAAAAAAAAA
-                        </div>
-                    </div>
-    
-                    <div class="row">
-                        <div class="col-lg-5">
-                        </div>
-                        <div class="col-lg-1">
-                            name2 :
-                        </div>
-                        <div class="col-lg-5 dialog">
-                           B:BBBBAAAAAAAAA
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-5">
-                        </div>
-                        <div class="col-lg-1">
-                            name2 :
-                        </div>
-                        <div class="col-lg-5 dialog">
-                           B:BBBBAAAAAAAAA
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-5">
-                        </div>
-                        <div class="col-lg-1">
-                            name2 :
-                        </div>
-                        <div class="col-lg-5 dialog">
-                           B:BBBBAAAAAAAAA
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-5">
-                        </div>
-                        <div class="col-lg-1">
-                            name2 :
-                        </div>
-                        <div class="col-lg-5 dialog">
-                           B:BBBBAAAAAAAAA
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-5">
-                        </div>
-                        <div class="col-lg-1">
-                            name2 :
-                        </div>
-                        <div class="col-lg-5 dialog">
-                           B:BBBBAAAAAAAAA
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-5">
-                        </div>
-                        <div class="col-lg-1">
-                            name2 :
-                        </div>
-                        <div class="col-lg-5 dialog">
-                           B:BBBBAAAAAAAAA
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-5">
-                        </div>
-                        <div class="col-lg-1">
-                            name2 :
-                        </div>
-                        <div class="col-lg-5 dialog">
-                           B:BBBBAAAAAAAAA
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-5">
-                        </div>
-                        <div class="col-lg-1">
-                            name2 :
-                        </div>
-                        <div class="col-lg-5 dialog">
-                           B:BBBBAAAAAAAAA
-                        </div>
-                    </div>
+             
+              
                 </div>
                 <div class="container-fluid">  
-                    <div class="row" style="padding-top: 20px;">
-                        <div class="col-12" style="padding: 0px;">
-                            <textarea style="width: 100%; max-width: 100%;" rows="5">
-    
-                            </textarea>
+                    <div class="container-fluid">  
+                        <div class="row" style="padding-top: 20px;">
+                            <div class="col-12" style="padding: 0px;">
+                                <textarea style="width: 100%; max-width: 100%;" rows="5">
+        
+                                </textarea>
+                            </div>
+                            <div class="col-12"  style="padding: 0px;">
+                                <button class="btn btn-primary">送出</button>
+                            </div>
                         </div>
-                        <div class="col-12"  style="padding: 0px;">
-                            <button class="btn btn-primary">送出</button>
-                        </div>
-                    </div>
+                    </div> 
                 </div> 
             </div>
           </div>
