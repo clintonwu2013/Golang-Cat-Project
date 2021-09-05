@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"goWeb/model"
+	"goWeb/ws"
 	"io/ioutil"
 	"log"
 	"math"
@@ -15,6 +16,7 @@ import (
 
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/lib/pq"
 	"golang.org/x/oauth2"
@@ -40,6 +42,12 @@ var (
 	}
 	randomState = "random"
 )
+
+var upGrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
 
 func init() {
 	err := initDB()
@@ -72,6 +80,8 @@ func checkError(err error) {
 	}
 }
 func main() {
+	go ws.Manager.Start()
+
 	r := gin.Default()
 	r.LoadHTMLGlob("view/*")
 	r.Static("asset", "./asset")
@@ -108,12 +118,41 @@ func main() {
 	r.GET("/login", loginHandler)
 	r.GET("/checkLoggedIn", checkLoggedInHandler)
 
+	r.GET("/webSocket", WsPing)
+	r.GET("/chat", chatHTML)
+	r.GET("/ws", ws.WsHandler)
+
 	r.DELETE("/deleteAdoptPost", deleteAdoptPostHandler)
 
 	r.PUT("/updateAdoptPost", updateAdoptPostHandler)
 	r.Run() // listen and serve (for windows "http://localhost:8080")
 }
 
+func WsPing(ctx *gin.Context) {
+
+	ws, err := upGrader.Upgrade(ctx.Writer, ctx.Request, nil)
+	if err != nil {
+		return
+	}
+	defer ws.Close()
+	for {
+		// 讀取ws Socket傳來的訊息
+		_, message, err := ws.ReadMessage()
+		if err != nil {
+			break
+		}
+
+		// 寫入Websocket
+		err = ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintln("got it : "+string(message))))
+		if err != nil {
+			break
+		}
+	}
+}
+
+func chatHTML(c *gin.Context) {
+	c.HTML(http.StatusOK, "chat_contact.html", nil)
+}
 func catHTMLVueJSHandler(c *gin.Context) {
 	postIdStr := c.Query("postId")
 	if postIdStr == "" {
