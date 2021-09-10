@@ -7,6 +7,7 @@ create TABLE users(
    name  varchar(50)
 );
 
+
 CREATE TABLE cat_adopt_posts
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY primary key,
